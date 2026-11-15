@@ -1,7 +1,16 @@
-const CACHE='xinling-v9';
-const ASSETS=['./','./index.html','./icon.svg','./apple-touch-icon.png','./manifest.webmanifest','./model-reference.webp','./xinling-home-hero.mp4'];
-self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting())));
-self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
+const CACHE='xinling-v10';
+const ASSETS=[
+  './','./index.html','./icon.svg','./apple-touch-icon.png','./manifest.webmanifest',
+  './model-reference.webp','./xinling-home-hero.mp4',
+  './assets/portrait-clean.jpg','./assets/portrait-elegant.jpg','./assets/portrait-cinematic.jpg',
+  './assets/home-gallery-motion.mp4','./assets/motion-elegant.mp4','./assets/motion-cinematic.mp4'
+];
+self.addEventListener('install',event=>event.waitUntil(
+  caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting())
+));
+self.addEventListener('activate',event=>event.waitUntil(
+  caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())
+));
 self.addEventListener('fetch',event=>{
   if(event.request.method!=='GET')return;
   const url=new URL(event.request.url);
