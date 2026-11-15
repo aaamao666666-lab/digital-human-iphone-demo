@@ -45,12 +45,17 @@ export async function onRequestPost({ request, env }) {
   if (!authorized(request, env)) return json({ error:"未授权。请先填写内部测试口令。" }, 401);
   if (!env.XINLING_MEDIA) return json({ error:"云端素材库尚未绑定 R2 存储桶。" }, 503);
 
-  const name = safeName(decodeURIComponent(request.headers.get("x-file-name") || "upload"));
-  const mime = (request.headers.get("content-type") || "").split(";")[0].trim().toLowerCase();
-  const allowed = new Set(["image/jpeg","image/png","image/webp","image/gif","video/mp4","video/quicktime","video/webm","model/gltf-binary","model/gltf+json","application/octet-stream"]);
+  let decodedName = "upload";
+  try { decodedName = decodeURIComponent(request.headers.get("x-file-name") || "upload"); } catch {}
+  const name = safeName(decodedName);
   const ext = name.includes(".") ? name.split(".").pop().toLowerCase() : "";
-  const extAllowed = new Set(["jpg","jpeg","png","webp","gif","mp4","mov","webm","glb","gltf"]);
-  if (!allowed.has(mime) || !extAllowed.has(ext)) return json({ error:"目前只支持 JPG、PNG、WEBP、GIF、MP4、MOV、WEBM、GLB、GLTF 文件。" }, 415);
+  const MIME_BY_EXT = {
+    jpg:"image/jpeg", jpeg:"image/jpeg", png:"image/png", webp:"image/webp", gif:"image/gif",
+    mp4:"video/mp4", mov:"video/quicktime", webm:"video/webm",
+    glb:"model/gltf-binary", gltf:"model/gltf+json"
+  };
+  const mime = MIME_BY_EXT[ext];
+  if (!mime) return json({ error:"目前只支持 JPG、PNG、WEBP、GIF、MP4、MOV、WEBM、GLB、GLTF 文件。" }, 415);
   const contentLength = Number(request.headers.get("content-length") || 0);
   if (contentLength > MAX_BYTES) return json({ error:"单个文件不能超过 50 MB，请先压缩后再上传。" }, 413);
 
