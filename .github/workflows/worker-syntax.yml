@@ -1,0 +1,43 @@
+name: Worker source checks
+
+on:
+  push:
+    branches:
+      - "1主要的"
+    paths:
+      - "worker.js"
+      - "functions/**"
+      - "wrangler.jsonc"
+      - "package.json"
+      - ".assetsignore"
+      - ".github/workflows/worker-syntax.yml"
+  pull_request:
+    paths:
+      - "worker.js"
+      - "functions/**"
+      - "wrangler.jsonc"
+      - "package.json"
+      - ".assetsignore"
+      - ".github/workflows/worker-syntax.yml"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: 检查 Worker 和 API 语法
+        run: |
+          node --check worker.js
+          find functions -name '*.js' -print0 | xargs -0 -n1 node --check
+      - name: 检查 Wrangler 配置
+        run: node -e "JSON.parse(require('fs').readFileSync('wrangler.jsonc', 'utf8')); console.log('wrangler.jsonc OK')"
+      - name: 检查公开资源排除规则
+        run: |
+          grep -qx 'functions/' .assetsignore
+          grep -qx 'worker.js' .assetsignore
+          grep -qx 'WORKER_DEPLOYMENT.md' .assetsignore
