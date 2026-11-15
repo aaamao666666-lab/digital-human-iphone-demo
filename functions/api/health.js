@@ -6,6 +6,7 @@ export function onRequestGet({ env }) {
     service: "xinling-api",
     deepseekConfigured: Boolean(env.DEEPSEEK_API_KEY),
     accessGateConfigured: Boolean(env.APP_TEST_KEY),
-    message: "鑫灵 API 在线"
+    cloudStorageConfigured: Boolean(env.XINLING_MEDIA),
+    message: "鑫灵 API 状态已检查"
   }), { headers: HEADERS });
 }
