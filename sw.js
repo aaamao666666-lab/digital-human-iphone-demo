@@ -1,9 +1,8 @@
-const CACHE='xinling-v10';
+const CACHE='xinling-v11';
 const ASSETS=[
   './','./index.html','./icon.svg','./apple-touch-icon.png','./manifest.webmanifest',
-  './model-reference.webp','./xinling-home-hero.mp4',
-  './assets/portrait-clean.jpg','./assets/portrait-elegant.jpg','./assets/portrait-cinematic.jpg',
-  './assets/home-gallery-motion.mp4','./assets/motion-elegant.mp4','./assets/motion-cinematic.mp4'
+  './assets/portrait-clean.webp','./assets/portrait-elegant.webp','./assets/portrait-cinematic.webp',
+  './xinling-home-hero.mp4'
 ];
 self.addEventListener('install',event=>event.waitUntil(
   caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting())
