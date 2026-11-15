@@ -67,6 +67,7 @@ async function refreshCloudAssets(){
   });
  }catch(error){list.textContent=error.message||'无法读取云端素材。';}
 }
+window.refreshCloudAssets=refreshCloudAssets;
 async function previewCloudAsset(item){
  const box=document.getElementById('assetPreview');box.textContent='正在读取云端文件…';
  try{
