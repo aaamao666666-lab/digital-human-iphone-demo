@@ -280,19 +280,18 @@ modelInput.addEventListener('change', async event => {
   }
   if (!setupViewer()) return;
   status.textContent = '正在读取模型：' + file.name;
+  let cloudSaveMessage = ' · 云端尚未配置';
   if (window.xinlingUploadAsset) {
     try {
       await window.xinlingUploadAsset(file);
-      const msg = '已上传到私有云端：' + file.name;
-      const prevStatus = status.textContent;
-      status.textContent = msg + '；本机开始解析预览…';
+      cloudSaveMessage = ' · 已保存到私有云端';
       if (window.refreshCloudAssets) window.refreshCloudAssets();
     } catch (error) {
-      status.textContent = '本机仍可预览，但云端上传失败：' + (error.message || '未知错误');
+      cloudSaveMessage = ' · 云端上传失败：' + (error.message || '未知错误');
     }
   }
   const reader = new FileReader();
-  reader.onerror = () => { status.textContent = '读取文件失败，请重新选择 GLB 文件。'; };
+  reader.onerror = () => { status.textContent = '读取文件失败，请重新选择 GLB 文件。' + cloudSaveMessage; };
   reader.onload = () => {
     const loader = new GLTFLoader();
     loader.parse(reader.result, '', gltf => {
@@ -306,11 +305,11 @@ modelInput.addEventListener('change', async event => {
         animationPaused = false;
         animationToggle.disabled = false;
         animationToggle.textContent = '暂停动画';
-        status.textContent = '模型已显示：' + file.name + ' · 含 ' + gltf.animations.length + ' 段动画，正在播放第一段。';
+        status.textContent = '模型已显示：' + file.name + ' · 含 ' + gltf.animations.length + ' 段动画，正在播放第一段。' + cloudSaveMessage;
       } else {
         animationToggle.disabled = true;
         animationToggle.textContent = '无内置动画';
-        status.textContent = '模型已显示：' + file.name + ' · 可以用手指旋转和缩放。模型本身没有内置动画。';
+        status.textContent = '模型已显示：' + file.name + ' · 可以用手指旋转和缩放。模型本身没有内置动画。' + cloudSaveMessage;
       }
       resetCamera.disabled = false;
     }, error => {
