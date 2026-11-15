@@ -1,0 +1,73 @@
+const HEADERS = { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" };
+const PREFIX = "testing/";
+const MAX_BYTES = 50 * 1024 * 1024;
+
+function json(data, status=200) { return new Response(JSON.stringify(data), { status, headers: HEADERS }); }
+function authorized(request, env) {
+  const expected = env.APP_TEST_KEY || "";
+  const supplied = request.headers.get("x-app-access-key") || "";
+  if (!expected || supplied.length !== expected.length) return false;
+  let diff = 0;
+  for (let i=0;i<expected.length;i++) diff |= expected.charCodeAt(i) ^ supplied.charCodeAt(i);
+  return diff === 0;
+}
+function safeName(value) {
+  return String(value || "upload").replace(/[\\/\\\\\\0-\\x1f\\x7f]/g, "_").slice(0,160) || "upload";
+}
+function kindFor(mime) {
+  if (mime.startsWith("image/")) return "image";
+  if (mime.startsWith("video/")) return "video";
+  return "model";
+}
+
+export async function onRequestGet({ request, env }) {
+  if (!authorized(request, env)) return json({ error:"未授权。请输入内部测试口令。" }, 401);
+  if (!env.XINLING_MEDIA) return json({ error:"云端素材库尚未绑定 R2 存储桶。" }, 503);
+  try {
+    const result = await env.XINLING_MEDIA.list({ prefix:PREFIX, limit:100, include:["customMetadata","httpMetadata"] });
+    const items = result.objects.map(obj => ({
+      id: obj.key.slice(PREFIX.length),
+      name: obj.customMetadata?.name || "未命名素材",
+      kind: obj.customMetadata?.kind || kindFor(obj.httpMetadata?.contentType || ""),
+      contentType: obj.httpMetadata?.contentType || "application/octet-stream",
+      size: obj.size,
+      uploaded: obj.uploaded ? obj.uploaded.toISOString() : null
+    }));
+    items.sort((a,b) => String(b.uploaded||"").localeCompare(String(a.uploaded||"")));
+    return json({ items, truncated:result.truncated, cursor:result.truncated ? result.cursor : null });
+  } catch (error) {
+    console.error("R2 list failed", error);
+    return json({ error:"读取云端素材库失败，请检查 R2 绑定。" }, 500);
+  }
+}
+
+export async function onRequestPost({ request, env }) {
+  if (!authorized(request, env)) return json({ error:"未授权。请先填写内部测试口令。" }, 401);
+  if (!env.XINLING_MEDIA) return json({ error:"云端素材库尚未绑定 R2 存储桶。" }, 503);
+
+  const name = safeName(decodeURIComponent(request.headers.get("x-file-name") || "upload"));
+  const mime = (request.headers.get("content-type") || "").split(";")[0].trim().toLowerCase();
+  const allowed = new Set(["image/jpeg","image/png","image/webp","image/gif","video/mp4","video/quicktime","video/webm","model/gltf-binary","model/gltf+json","application/octet-stream"]);
+  const ext = name.includes(".") ? name.split(".").pop().toLowerCase() : "";
+  const extAllowed = new Set(["jpg","jpeg","png","webp","gif","mp4","mov","webm","glb","gltf"]);
+  if (!allowed.has(mime) || !extAllowed.has(ext)) return json({ error:"目前只支持 JPG、PNG、WEBP、GIF、MP4、MOV、WEBM、GLB、GLTF 文件。" }, 415);
+  const contentLength = Number(request.headers.get("content-length") || 0);
+  if (contentLength > MAX_BYTES) return json({ error:"单个文件不能超过 50 MB，请先压缩后再上传。" }, 413);
+
+  try {
+    const bytes = await request.arrayBuffer();
+    if (!bytes.byteLength) return json({ error:"文件内容为空。" }, 400);
+    if (bytes.byteLength > MAX_BYTES) return json({ error:"单个文件不能超过 50 MB，请先压缩后再上传。" }, 413);
+    const id = crypto.randomUUID();
+    const key = PREFIX + id;
+    const kind = kindFor(mime === "application/octet-stream" ? "model/gltf-binary" : mime);
+    await env.XINLING_MEDIA.put(key, bytes, {
+      httpMetadata: { contentType:mime, contentDisposition:"inline" },
+      customMetadata: { name, kind, uploadedAt:new Date().toISOString(), stage:"internal-test" }
+    });
+    return json({ ok:true, item:{ id, name, kind, contentType:mime, size:bytes.byteLength } }, 201);
+  } catch (error) {
+    console.error("R2 upload failed", error);
+    return json({ error:"上传到云端失败。请检查存储桶绑定和文件大小。" }, 500);
+  }
+}
