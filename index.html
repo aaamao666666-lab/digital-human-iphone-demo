@@ -123,6 +123,72 @@ img,video,canvas,svg{max-width:100%}
  .floating-note{min-width:0;padding:9px 10px}
 }
 
+
+/* Mobile-first portrait and motion galleries */
+.looks-section{padding:84px clamp(24px,7.4vw,112px) 76px;background:#f5f3ed;overflow:hidden}
+.looks-section .section-inner,.motion-section .section-inner{max-width:1210px}
+.look-heading,.motion-heading{display:flex;justify-content:space-between;align-items:end;gap:36px;margin-bottom:30px}
+.look-heading h2,.motion-heading h2{font-size:clamp(34px,4vw,50px);line-height:1.28;letter-spacing:1px;color:#303329;margin:14px 0 0}
+.look-heading h2 em,.motion-heading h2 em{font-style:normal;color:#809477}
+.look-heading>p,.motion-heading>p{max-width:340px;color:#85877d;font-size:12px;line-height:2;margin:0 0 5px}
+.look-rail{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px}
+.look-card{min-width:0;background:#fffefa;border:1px solid #e8e5dc;padding:10px;transition:transform .3s,box-shadow .3s}
+.look-card:hover{transform:translateY(-4px);box-shadow:0 16px 38px #39443412}
+.look-image{height:clamp(260px,34vw,420px);position:relative;overflow:hidden;background:#e8e9e2}
+.look-image img{width:100%;height:100%;object-fit:cover;object-position:center 28%;display:block;transition:transform .8s}
+.look-card:hover .look-image img{transform:scale(1.035)}
+.look-index{position:absolute;left:13px;top:13px;padding:6px 9px;background:#fffefaeb;color:#697865;font:9px Georgia,serif;letter-spacing:1.4px}
+.look-copy{padding:16px 8px 13px}
+.look-copy>span{font-size:8px;color:#9a9d8e;letter-spacing:1.8px}
+.look-copy h3{font:500 20px "Songti SC",serif;color:#34382f;margin:7px 0}
+.look-copy p{color:#929489;font-size:10px;margin:0}
+.look-scroll-hint{display:none}
+.motion-section{padding:86px clamp(24px,7.4vw,112px);background:#e9ede5;overflow:hidden}
+.motion-heading{margin-bottom:28px}
+.motion-rail{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.motion-card{min-width:0;background:#f9f8f2;border:1px solid #e0e4da;padding:9px}
+.motion-media{height:clamp(280px,34vw,410px);position:relative;overflow:hidden;background:#d9dfd5}
+.motion-media video{width:100%;height:100%;display:block;object-fit:cover;object-position:center 25%}
+.motion-tag{position:absolute;left:12px;top:12px;background:#fffefaed;padding:7px 9px;color:#6e7d67;font:8px Georgia,serif;letter-spacing:1.5px}
+.motion-play{position:absolute;right:12px;bottom:12px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#f8f6f0d9;color:#61745e;font-size:11px}
+.motion-copy{display:flex;justify-content:space-between;align-items:center;padding:14px 8px 9px}
+.motion-copy>div>span{font-size:8px;letter-spacing:1.5px;color:#96998c}
+.motion-copy h3{font:500 16px "Songti SC",serif;color:#34382f;margin:6px 0 0}
+.motion-arrow{font-size:16px;color:#7d8b75}
+.motion-note{font-size:10px;color:#899184;margin:17px 0 0}
+.showcase-collage{overflow:visible!important;background:transparent!important;max-width:440px}
+.showcase-collage:after{display:none}
+.showcase-collage .showcase-main{position:absolute;left:0;top:0;width:75%;height:100%;object-fit:cover;object-position:center 25%;border-radius:150px 150px 8px 8px;box-shadow:0 18px 48px #39443421}
+.showcase-collage .showcase-inset{position:absolute;right:0;bottom:24px;width:42%;height:48%;object-fit:cover;object-position:center 25%;border:7px solid #e9ede5;box-shadow:0 12px 35px #39443424}
+.showcase-collage .showcase-stamp{left:19px;bottom:18px;text-shadow:0 1px 9px #0008}
+@media(max-width:680px){
+ .looks-section{padding:58px 0 53px}
+ .look-heading,.motion-heading{display:block;padding:0 20px;margin-bottom:20px}
+ .look-heading h2,.motion-heading h2{font-size:34px}
+ .look-heading>p,.motion-heading>p{font-size:11px;line-height:1.9;margin-top:12px;max-width:100%}
+ .look-rail,.motion-rail{display:flex;gap:12px;overflow-x:auto;overflow-y:hidden;padding:0 20px 12px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scrollbar-width:none}
+ .look-rail::-webkit-scrollbar,.motion-rail::-webkit-scrollbar{display:none}
+ .look-card{flex:0 0 min(72vw,270px);scroll-snap-align:start;padding:8px}
+ .look-image{height:clamp(290px,104vw,390px)}
+ .look-copy{padding:12px 7px 10px}
+ .look-copy h3{font-size:18px}
+ .look-scroll-hint{display:flex;align-items:center;gap:10px;padding:4px 20px 0;color:#a09f92;font-size:8px;letter-spacing:1px}
+ .look-scroll-hint i{height:1px;flex:1;background:#deded3}
+ .motion-section{padding:58px 0 47px}
+ .motion-card{flex:0 0 min(68vw,250px);scroll-snap-align:start;padding:7px}
+ .motion-media{height:clamp(290px,102vw,380px)}
+ .motion-copy{padding:12px 6px 8px}
+ .motion-copy h3{font-size:14px}
+ .motion-note{padding:0 20px;line-height:1.8;font-size:9px}
+ .showcase-collage{height:390px!important;width:100%;max-width:360px}
+}
+@media(max-width:380px){
+ .look-heading h2,.motion-heading h2{font-size:31px}
+ .look-card{flex-basis:74vw}
+ .motion-card{flex-basis:72vw}
+ .look-image,.motion-media{height:300px}
+}
+
 </style><script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.187.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.187.0/examples/jsm/"}}
 </script>
@@ -184,6 +250,30 @@ img,video,canvas,svg{max-width:100%}
     <div class="strip-tail">MAKE IT YOURS <span>↗</span></div>
   </section>
 
+  <section class="looks-section" id="looks" aria-label="数字人形象风格灵感">
+    <div class="section-inner">
+      <div class="look-heading">
+        <div><div class="kicker">EXPLORE YOUR LOOK</div><h2>不同风格，<br><em>都能成为你的表达。</em></h2></div>
+        <p>从清新自然到东方雅致，先浏览不同人物造型灵感，再逐步完善自己的数字形象。</p>
+      </div>
+      <div class="look-rail">
+        <article class="look-card">
+          <div class="look-image"><img src="assets/portrait-clean.jpg" alt="清新写实风格人物形象参考" loading="lazy"><span class="look-index">LOOK 01</span></div>
+          <div class="look-copy"><span>FRESH · REAL</span><h3>清新写实</h3><p>自然妆感 · 日常质感</p></div>
+        </article>
+        <article class="look-card">
+          <div class="look-image"><img src="assets/portrait-elegant.jpg" alt="东方雅致风格人物形象参考" loading="lazy"><span class="look-index">LOOK 02</span></div>
+          <div class="look-copy"><span>EASTERN · ELEGANT</span><h3>东方雅致</h3><p>温润光影 · 优雅造型</p></div>
+        </article>
+        <article class="look-card">
+          <div class="look-image"><img src="assets/portrait-cinematic.jpg" alt="电影氛围风格人物形象参考" loading="lazy"><span class="look-index">LOOK 03</span></div>
+          <div class="look-copy"><span>CINEMATIC · MOOD</span><h3>电影氛围</h3><p>光影层次 · 镜头表现</p></div>
+        </article>
+      </div>
+      <div class="look-scroll-hint"><span>左右滑动查看更多</span><i></i><span>01 — 03</span></div>
+    </div>
+  </section>
+
   <section class="section feature-section" id="features">
     <div class="section-inner">
       <div class="section-heading">
@@ -210,9 +300,37 @@ img,video,canvas,svg{max-width:100%}
     </div>
   </section>
 
+  <section class="motion-section" id="motion">
+    <div class="section-inner">
+      <div class="motion-heading">
+        <div><div class="kicker">MOTION MOMENTS</div><h2>让人物画面，<br><em>自然地动起来。</em></h2></div>
+        <p>精选你上传的视频素材，做成适合手机浏览的竖屏动态展示。点开就能看，静音循环播放。</p>
+      </div>
+      <div class="motion-rail">
+        <article class="motion-card">
+          <div class="motion-media"><video autoplay muted loop playsinline preload="metadata" poster="assets/portrait-clean.jpg" aria-label="清新人物动态展示"><source src="assets/home-gallery-motion.mp4" type="video/mp4"></video><span class="motion-tag">MOTION 01</span><span class="motion-play" aria-hidden="true">Ⅱ</span></div>
+          <div class="motion-copy"><div><span>素材短片</span><h3>清新自然 · 镜头特写</h3></div><span class="motion-arrow">↗</span></div>
+        </article>
+        <article class="motion-card">
+          <div class="motion-media"><video autoplay muted loop playsinline preload="metadata" poster="assets/portrait-elegant.jpg" aria-label="东方雅致人物动态展示"><source src="assets/motion-elegant.mp4" type="video/mp4"></video><span class="motion-tag">MOTION 02</span><span class="motion-play" aria-hidden="true">Ⅱ</span></div>
+          <div class="motion-copy"><div><span>素材短片</span><h3>东方雅致 · 柔和光影</h3></div><span class="motion-arrow">↗</span></div>
+        </article>
+        <article class="motion-card">
+          <div class="motion-media"><video autoplay muted loop playsinline preload="metadata" poster="assets/portrait-cinematic.jpg" aria-label="电影氛围人物动态展示"><source src="assets/motion-cinematic.mp4" type="video/mp4"></video><span class="motion-tag">MOTION 03</span><span class="motion-play" aria-hidden="true">Ⅱ</span></div>
+          <div class="motion-copy"><div><span>素材短片</span><h3>电影氛围 · 近景画面</h3></div><span class="motion-arrow">↗</span></div>
+        </article>
+      </div>
+      <p class="motion-note">以上为已上传素材剪辑展示；完整 3D 身体动作、实时口型同步仍在开发中。</p>
+    </div>
+  </section>
+
   <section class="showcase-section" id="about">
     <div class="showcase-inner">
-      <div class="showcase-visual"><img src="model-reference.webp" alt="鑫灵数字人形象参考" loading="lazy"><span class="showcase-stamp">XINLING<br>STUDIO</span></div>
+      <div class="showcase-visual showcase-collage">
+        <img class="showcase-main" src="assets/portrait-elegant.jpg" alt="东方雅致人物形象参考" loading="lazy">
+        <img class="showcase-inset" src="assets/portrait-clean.jpg" alt="清新写实人物形象参考" loading="lazy">
+        <span class="showcase-stamp">XINLING<br>STUDIO</span>
+      </div>
       <div class="showcase-copy">
         <div class="kicker">BUILT AROUND YOUR IDENTITY</div>
         <h2>不是模板化的<br>虚拟形象。<br><em>而是属于你的表达。</em></h2>
