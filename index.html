@@ -1,16 +1,132 @@
-<!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#101827"><title>数字人工作台｜手机测试版</title><style>
-:root{color-scheme:dark;--bg:#0b1220;--panel:#151f30;--muted:#9aa9bd;--accent:#70d6c4}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#eef4fb;font:16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}header{padding:22px 18px 14px;background:#101a2b;position:sticky;top:0;z-index:3}h1{font-size:21px;margin:0 0 6px}.sub{color:var(--muted);font-size:13px}.tabs{display:flex;gap:8px;padding:12px 14px;overflow:auto;position:sticky;top:77px;background:var(--bg);z-index:2}.tabs button,.action{border:1px solid #34445c;background:#1b2940;color:#eaf3ff;border-radius:12px;padding:11px 14px;font-size:14px}.tabs button.active,.action.primary{background:#1b665f;border-color:#288f83}.wrap{padding:0 14px 28px;max-width:760px;margin:auto}.panel{display:none;background:var(--panel);border:1px solid #29384d;border-radius:18px;padding:16px;margin:8px 0 14px}.panel.active{display:block}h2{font-size:17px;margin:0 0 12px}.hint{color:var(--muted);font-size:13px;line-height:1.6}.card{background:#0f1929;border:1px solid #2b3a50;border-radius:14px;padding:14px;margin:10px 0}input,textarea{width:100%;padding:12px;border-radius:10px;border:1px solid #3a4b63;background:#0c1625;color:white;margin:8px 0}button{cursor:pointer}#preview{width:100%;max-height:320px;object-fit:contain;background:#080e18;border-radius:12px;margin-top:10px}#viewer{height:360px;background:#080e18;border-radius:12px;overflow:hidden;position:relative}#viewer canvas{display:block;width:100%;height:100%}.status{color:var(--accent);font-size:13px;margin-top:8px}.warn{border-left:3px solid #e6b65b;padding:10px 12px;background:#302817;border-radius:8px;color:#f3dfb5;font-size:13px;line-height:1.6}.disabled{opacity:.5}.chat{height:180px;overflow:auto;background:#0e1827;border-radius:12px;padding:10px;color:#d8e3f0;font-size:14px}.action{width:100%;margin-top:8px}.foot{font-size:12px;color:var(--muted);text-align:center;padding:16px}
-</style></head><body><header><h1>数字人工作台</h1><div class="sub">iPhone 静态测试版 · 本地预览，不需要服务器</div></header><nav class="tabs"><button class="active" data-tab="home">首页</button><button data-tab="materials">我的素材</button><button data-tab="model">3D 模型</button><button data-tab="chat">AI 聊天</button></nav><main class="wrap">
-<section id="home" class="panel active"><h2>欢迎使用数字人测试台</h2><div class="card"><b>本版本可以真实测试</b><p class="hint">在手机本地选择照片、视频并预览；选择已有 GLB 模型并在浏览器中查看。文件不会上传到服务器。</p></div><div class="card"><b>尚未接入的功能</b><p class="hint">DeepSeek 在线对话、云端素材保存、照片/视频自动生成 3D、账号系统和多人数据隔离都需要后端服务。本页面不会假装这些功能已经完成。</p></div></section>
-<section id="materials" class="panel"><h2>本地素材预览</h2><p class="hint">选择照片或视频。素材只在当前浏览器临时预览，刷新页面后需要重新选择。</p><input id="media" type="file" accept="image/*,video/*"><div id="mediaInfo" class="hint">尚未选择素材</div><img id="preview" hidden alt="素材预览"></section>
-<section id="model" class="panel"><h2>GLB / glTF 模型预览</h2><p class="hint">选择设备中已有的 .glb 文件。模型只在本机浏览器加载，不会上传。</p><input id="modelFile" type="file" accept=".glb,model/gltf-binary"><div id="viewer"></div><div id="modelInfo" class="status">等待选择 GLB 文件</div><p class="hint">可用手指拖动旋转、双指缩放。需要网络加载 Three.js 组件。</p></section>
-<section id="chat" class="panel"><h2>AI 数字人聊天</h2><div class="warn">当前静态版本没有连接 DeepSeek 后端，因此不能真实生成 AI 回复。不要把 API Key 填在这里或写进网页。</div><div class="chat" id="chatlog">系统：聊天界面已准备好。连接安全后端后才能启用真实 AI 对话。</div><textarea id="message" rows="2" placeholder="聊天功能暂未连接"></textarea><button class="action disabled" disabled>暂未连接 AI 服务</button></section>
-<div class="foot">测试版 · 本地预览不等于云端保存 · 请只使用自己有权使用的素材</div></main>
-<script type="module">
-const tabs=[...document.querySelectorAll('[data-tab]')];tabs.forEach(b=>b.addEventListener('click',()=>{tabs.forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id===b.dataset.tab));if(b.dataset.tab==='model')window.dispatchEvent(new Event('resize'))}));
-const media=document.querySelector('#media'),img=document.querySelector('#preview'),info=document.querySelector('#mediaInfo');media.addEventListener('change',()=>{const f=media.files?.[0];if(!f)return;const url=URL.createObjectURL(f);info.textContent=`${f.name} · ${(f.size/1024/1024).toFixed(2)} MB`;img.hidden=false;if(f.type.startsWith('image/')){img.src=url;img.style.display='block'}else if(f.type.startsWith('video/')){img.style.display='none';let old=document.querySelector('#vid');if(old)old.remove();const v=document.createElement('video');v.id='vid';v.src=url;v.controls=true;v.playsInline=true;v.style.cssText='width:100%;max-height:320px;margin-top:10px;border-radius:12px';img.after(v)}else info.textContent='不支持的文件类型'});
-let scene,renderer,camera,controls,mixer,clock,raf;const viewer=document.querySelector('#viewer'),modelInfo=document.querySelector('#modelInfo');
-async function init3d(){if(renderer)return;try{const THREE=await import('https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js');const {OrbitControls}=await import('https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/controls/OrbitControls.js');const {GLTFLoader}=await import('https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/loaders/GLTFLoader.js');scene=new THREE.Scene();scene.background=new THREE.Color(0x080e18);camera=new THREE.PerspectiveCamera(45,1,.1,1000);camera.position.set(0,1.4,3);renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});renderer.setPixelRatio(Math.min(devicePixelRatio,2));viewer.appendChild(renderer.domElement);controls=new OrbitControls(camera,renderer.domElement);controls.target.set(0,1,0);controls.update();scene.add(new THREE.HemisphereLight(0xffffff,0x526070,2));const light=new THREE.DirectionalLight(0xffffff,2);light.position.set(3,5,4);scene.add(light);clock=new THREE.Clock();const resize=()=>{const w=viewer.clientWidth,h=viewer.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)};new ResizeObserver(resize).observe(viewer);resize();const loop=()=>{raf=requestAnimationFrame(loop);const d=clock.getDelta();if(mixer)mixer.update(d);controls.update();renderer.render(scene,camera)};loop();window.loadGLB=(file)=>{if(!file)return;const url=URL.createObjectURL(file);new GLTFLoader().load(url,g=>{if(window.currentModel)scene.remove(window.currentModel);window.currentModel=g.scene;scene.add(g.scene);const box=new THREE.Box3().setFromObject(g.scene),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());g.scene.position.sub(center);const max=Math.max(size.x,size.y,size.z)||1;camera.position.set(max*1.5,max*1.1,max*2.2);controls.target.set(0,0,0);controls.update();mixer=g.animations.length?new THREE.AnimationMixer(g.scene):null;if(mixer&&g.animations[0])mixer.clipAction(g.animations[0]).play();modelInfo.textContent=`加载成功：${file.name} · 网格/节点可视 · 动画 ${g.animations.length} 段`;URL.revokeObjectURL(url)},undefined,e=>{modelInfo.textContent='模型加载失败：请确认文件是有效的 GLB 2.0，并检查网络'});};}catch(e){modelInfo.textContent='3D 组件加载失败，请检查网络或浏览器 WebGL 支持';}}
-document.querySelector('#modelFile').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;modelInfo.textContent='正在加载 Three.js 和模型…';await init3d();window.loadGLB?.(f)});
-</script></body></html>
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f5f5ef">
+<title>星灵 AI 数字人</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f5f5ef;color:#303b34;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif}
+header{padding:25px 20px 15px}
+.brand{font-size:13px;letter-spacing:3px;color:#83947d}
+h1{font-size:26px;margin:12px 0 5px}
+.sub{color:#879087;font-size:14px}
+main{padding:10px 18px 100px;max-width:600px;margin:auto}
+.page{display:none}.page.active{display:block}
+.hero{background:#e5eadf;border-radius:22px;padding:23px;margin:12px 0 20px}
+.hero h2{font-size:23px;margin:0 0 10px}
+.hero p{color:#69766b;line-height:1.7;font-size:14px}
+.photo{width:100%;height:180px;object-fit:cover;border-radius:16px;background:#dce3d7;margin-top:10px}
+.card{background:white;border:1px solid #e9ebe4;border-radius:18px;padding:18px;margin:13px 0}
+.card h3{margin:0 0 8px;font-size:17px}
+.card p{color:#899087;font-size:13px;line-height:1.6}
+.btn{display:block;width:100%;border:0;border-radius:13px;background:#738b70;color:white;padding:14px;font-size:15px;margin-top:12px}
+input[type=file]{display:none}
+.upload{display:block;text-align:center;background:#edf1e9;border:1px dashed #aab8a2;border-radius:13px;padding:15px;color:#61775e;margin-top:12px;font-size:14px}
+.preview{width:100%;max-height:300px;object-fit:contain;border-radius:13px;margin-top:12px;background:#f1f2ed}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e9ebe4;display:flex;padding:10px 5px calc(10px + env(safe-area-inset-bottom));justify-content:space-around}
+nav button{border:0;background:none;color:#92998f;font-size:13px;padding:8px}
+nav button.active{color:#587653;font-weight:bold}
+.small{font-size:12px;color:#9a9f96}
+</style>
+</head>
+<body>
+<header>
+<div class="brand">XINGLING · DIGITAL HUMAN</div>
+<h1>星灵 AI 数字人</h1>
+<div class="sub">创造属于你的数字分身</div>
+</header>
+<main>
+<section class="page active" id="home">
+<div class="hero">
+<h2>让你的数字形象<br>拥有新的生命</h2>
+<p>从照片、视频到 3D 模型，开始创建你的专属数字人。</p>
+<button class="btn" onclick="showPage('studio')">开始创建</button>
+</div>
+<div class="card">
+<h3>数字人工作台</h3>
+<p>上传照片或视频，预览你的个人素材。</p>
+<button class="btn" onclick="showPage('studio')">进入工作台</button>
+</div>
+<div class="card">
+<h3>我的数字人</h3>
+<p>你的数字人作品和创作记录将在这里管理。</p>
+</div>
+</section>
+
+<section class="page" id="studio">
+<h2>数字人工作台</h2>
+<p class="sub">上传素材，开始准备你的数字分身。</p>
+<div class="card">
+<h3>上传人物照片</h3>
+<label class="upload" for="photoFile">选择照片</label>
+<input id="photoFile" type="file" accept="image/*">
+<img id="photoPreview" class="preview" hidden>
+</div>
+<div class="card">
+<h3>上传人物视频</h3>
+<label class="upload" for="videoFile">选择视频</label>
+<input id="videoFile" type="file" accept="video/*">
+<video id="videoPreview" class="preview" controls hidden></video>
+</div>
+<div class="card">
+<h3>导入 3D 模型</h3>
+<label class="upload" for="modelFile">选择 GLB 模型</label>
+<input id="modelFile" type="file" accept=".glb,.gltf">
+<p id="modelInfo" class="small">选择模型后会显示文件信息。目前尚未接入 3D 模型渲染。</p>
+</div>
+</section>
+
+<section class="page" id="mine">
+<h2>我的</h2>
+<div class="card">
+<h3>个人中心</h3>
+<p>星灵 AI 数字人 · 手机测试版</p>
+</div>
+<div class="card">
+<h3>我的素材</h3>
+<p>照片和视频目前仅在当前设备预览，不会自动上传到云端。</p>
+</div>
+<div class="card">
+<h3>功能状态</h3>
+<p>页面导航：已实现</p>
+<p>照片预览：已实现</p>
+<p>视频预览：已实现</p>
+<p>GLB 模型渲染：尚未接入</p>
+<p>AI 对话与数字人生成：尚未接入</p>
+</div>
+</section>
+</main>
+<nav>
+<button class="active" onclick="showPage('home',this)">⌂ 首页</button>
+<button onclick="showPage('studio',this)">◇ 工作台</button>
+<button onclick="showPage('mine',this)">○ 我的</button>
+</nav>
+<script>
+function showPage(id,btn){
+document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+if(btn)btn.classList.add('active');
+else document.querySelectorAll('nav button')[1].classList.add('active');
+window.scrollTo(0,0);
+}
+document.getElementById('photoFile').onchange=e=>{
+const f=e.target.files[0];if(!f)return;
+const img=document.getElementById('photoPreview');
+img.src=URL.createObjectURL(f);img.hidden=false;
+};
+document.getElementById('videoFile').onchange=e=>{
+const f=e.target.files[0];if(!f)return;
+const v=document.getElementById('videoPreview');
+v.src=URL.createObjectURL(f);v.hidden=false;
+};
+document.getElementById('modelFile').onchange=e=>{
+const f=e.target.files[0];if(!f)return;
+document.getElementById('modelInfo').textContent='已选择：'+f.name+'（'+(f.size/1024/1024).toFixed(2)+' MB）。目前仅识别文件，尚未显示 3D 模型。';
+};
+</script>
+</body>
+</html>
