@@ -16,7 +16,7 @@
 
 ## 部署
 
-GitHub Pages 只托管静态资源，不会执行 `functions/` 目录里的后端代码。需要在 Cloudflare Pages 创建一个项目，连接本仓库，并将生产分支选择为 `1主要的`。本仓库静态页面在根目录，Framework preset 选 None，Build command 留空，Build output directory 填 `/`（若控制台不接受根目录值，按 Cloudflare Pages 新建项目向导的静态根目录默认值）。Cloudflare Pages 会自动识别根目录下的 `functions/` 路由并部署为 Functions。
+GitHub Pages 只托管静态资源，不会执行 `functions/` 目录里的后端代码。需要在 Cloudflare Pages 创建一个项目，连接本仓库，并将生产分支选择为 `1主要的`。本仓库静态页面在根目录，Framework preset 选 None，Build command 留空，Build output directory 填 `.`（即仓库根目录）。Cloudflare Pages 会自动识别根目录下的 `functions/` 路由并部署为 Functions。
 
 首次连接 Cloudflare GitHub App 时，只授权 `digital-human-iphone-demo` 一个仓库即可。
 
