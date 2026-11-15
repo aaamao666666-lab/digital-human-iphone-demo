@@ -1,132 +1,35 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#f5f5ef">
-<title>星灵 AI 数字人</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f5f0">
+<meta name="description" content="鑫灵 AI 数字人创作平台，探索专属数字形象与创作工作台。">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="鑫灵 AI">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.webmanifest">
+<title>鑫灵 AI 数字人｜让灵感拥有真实形象</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#f5f5ef;color:#303b34;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif}
-header{padding:25px 20px 15px}
-.brand{font-size:13px;letter-spacing:3px;color:#83947d}
-h1{font-size:26px;margin:12px 0 5px}
-.sub{color:#879087;font-size:14px}
-main{padding:10px 18px 100px;max-width:600px;margin:auto}
-.page{display:none}.page.active{display:block}
-.hero{background:#e5eadf;border-radius:22px;padding:23px;margin:12px 0 20px}
-.hero h2{font-size:23px;margin:0 0 10px}
-.hero p{color:#69766b;line-height:1.7;font-size:14px}
-.photo{width:100%;height:180px;object-fit:cover;border-radius:16px;background:#dce3d7;margin-top:10px}
-.card{background:white;border:1px solid #e9ebe4;border-radius:18px;padding:18px;margin:13px 0}
-.card h3{margin:0 0 8px;font-size:17px}
-.card p{color:#899087;font-size:13px;line-height:1.6}
-.btn{display:block;width:100%;border:0;border-radius:13px;background:#738b70;color:white;padding:14px;font-size:15px;margin-top:12px}
-input[type=file]{display:none}
-.upload{display:block;text-align:center;background:#edf1e9;border:1px dashed #aab8a2;border-radius:13px;padding:15px;color:#61775e;margin-top:12px;font-size:14px}
-.preview{width:100%;max-height:300px;object-fit:contain;border-radius:13px;margin-top:12px;background:#f1f2ed}
-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e9ebe4;display:flex;padding:10px 5px calc(10px + env(safe-area-inset-bottom));justify-content:space-around}
-nav button{border:0;background:none;color:#92998f;font-size:13px;padding:8px}
-nav button.active{color:#587653;font-weight:bold}
-.small{font-size:12px;color:#9a9f96}
+:root{--cream:#f7f5f0;--ink:#30382f;--muted:#777d73;--sage:#788b75;--sage2:#e9eee5;--gold:#c8ad7b;--line:#e7e5dc}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--cream);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}button,a{font:inherit}a{color:inherit;text-decoration:none}.top{height:68px;padding:0 clamp(18px,6vw,80px);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);position:sticky;top:0;background:#f7f5f0ed;backdrop-filter:blur(12px);z-index:5}.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:1px}.mark{width:38px;height:38px;border-radius:12px;overflow:hidden;background:#edf0e8;border:1px solid #dfe4d8}.mark img{width:100%;height:100%}.links{display:flex;gap:28px;color:#70766c;font-size:13px}.cta,.primary{border:0;border-radius:28px;background:var(--sage);color:white;padding:13px 22px;font-size:13px;cursor:pointer}.hero{max-width:1200px;margin:auto;padding:68px 24px 80px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;min-height:650px}.eyebrow,.kicker{font-size:11px;letter-spacing:3px;color:#71836c}.eyebrow:before{content:"";display:inline-block;width:27px;height:1px;background:var(--gold);vertical-align:middle;margin-right:10px}h1,h2{font-family:"Songti SC",STSong,Georgia,serif;font-weight:500}h1{font-size:clamp(44px,6vw,72px);line-height:1.2;margin:25px 0 18px}h1 em{font-style:normal;color:#81947b}.lead{max-width:430px;color:var(--muted);font-size:15px;line-height:2}.actions{display:flex;gap:12px;align-items:center;margin-top:30px}.secondary{border:1px solid #c6cec0;color:#667861;border-radius:28px;padding:12px 20px;font-size:13px;background:transparent}.visual{height:520px;max-width:460px;width:100%;justify-self:end;position:relative;border-radius:230px 230px 20px 20px;background:radial-gradient(ellipse at 48% 25%,#fffdf7 0,#e9e6dc 45%,#ccd4c7 100%);overflow:hidden;box-shadow:0 24px 60px #4c59471c}.figure{position:absolute;inset:0;display:flex;align-items:end;justify-content:center}.figure svg{width:100%;height:100%}.tag{position:absolute;right:12px;bottom:36px;background:#fbfaf4ed;border-radius:12px;padding:14px 18px;font-size:12px;line-height:1.7;box-shadow:0 12px 30px #0001}.tag b{display:block;font:17px Georgia;color:#596e56}.stamp{position:absolute;top:55px;left:-22px;width:76px;height:76px;border:1px solid var(--gold);border-radius:50%;display:grid;place-items:center;text-align:center;color:#9b855c;font:11px Georgia;background:#f7f5f0e8;transform:rotate(-12deg)}.section{padding:78px 22px}.section-inner{max-width:1080px;margin:auto}.heading{text-align:center;margin-bottom:38px}.heading h2,.band h2{font-size:clamp(30px,4vw,44px);margin:14px 0}.heading p,.band p{font-size:14px;line-height:1.9;color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.card,.panel{background:#fffefa;border:1px solid var(--line);border-radius:17px;padding:24px}.card small{color:#b29b70;font:13px Georgia}.card h3{font-size:16px;margin:20px 0 10px}.card p{color:#81867c;font-size:12px;line-height:1.8;margin:0}.band{background:var(--sage2);padding:65px 24px}.band-inner{max-width:1060px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:25px}.footer{padding:24px clamp(18px,6vw,80px);border-top:1px solid var(--line);display:flex;justify-content:space-between;color:#92958b;font-size:11px}.workspace{display:none;max-width:900px;min-height:75vh;margin:auto;padding:45px 20px 110px}.workspace.active{display:block}.workspace h2{font-size:34px}.hint{font-size:13px;line-height:1.8;color:var(--muted)}.panel{margin:16px 0}.upload{display:block;padding:20px;border:1px dashed #b5c3ae;border-radius:14px;background:#f5f6f1;text-align:center}.upload input{max-width:100%;margin-top:12px}.preview{display:block;max-width:100%;max-height:360px;margin:16px auto;border-radius:12px}.status{color:#71836c;font-size:12px;margin-top:10px}.mobile-tabs,.bottom{display:none}
+@media(max-width:760px){.top{height:60px}.links{display:none}.hero{grid-template-columns:1fr;padding:38px 20px 60px;gap:28px;min-height:0}.hero h1{font-size:46px}.visual{height:500px;justify-self:center;max-width:420px}.grid{grid-template-columns:1fr 1fr}.band-inner{display:block}.band .primary{margin-top:15px}.footer{flex-direction:column;gap:8px}.mobile-tabs{display:flex;gap:8px;padding:10px 16px;border-bottom:1px solid var(--line);overflow:auto}.mobile-tabs button{white-space:nowrap;border:1px solid var(--line);background:#fffefa;border-radius:24px;padding:8px 14px;color:#65745f;font-size:12px}.mobile-tabs button.active{background:var(--sage);color:white}.bottom{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:6;background:#fbfaf4f2;border-top:1px solid var(--line);padding:6px 10px max(6px,env(safe-area-inset-bottom));backdrop-filter:blur(10px)}.bottom button{flex:1;border:0;background:none;color:#888d82;font-size:11px;padding:8px}.bottom button.active{color:#60795c;font-weight:700}.bottom button span{display:block;font-size:19px;margin-bottom:3px}.workspace{padding:30px 18px 110px}}
 </style>
 </head>
 <body>
-<header>
-<div class="brand">XINGLING · DIGITAL HUMAN</div>
-<h1>星灵 AI 数字人</h1>
-<div class="sub">创造属于你的数字分身</div>
-</header>
-<main>
-<section class="page active" id="home">
-<div class="hero">
-<h2>让你的数字形象<br>拥有新的生命</h2>
-<p>从照片、视频到 3D 模型，开始创建你的专属数字人。</p>
-<button class="btn" onclick="showPage('studio')">开始创建</button>
-</div>
-<div class="card">
-<h3>数字人工作台</h3>
-<p>上传照片或视频，预览你的个人素材。</p>
-<button class="btn" onclick="showPage('studio')">进入工作台</button>
-</div>
-<div class="card">
-<h3>我的数字人</h3>
-<p>你的数字人作品和创作记录将在这里管理。</p>
-</div>
-</section>
-
-<section class="page" id="studio">
-<h2>数字人工作台</h2>
-<p class="sub">上传素材，开始准备你的数字分身。</p>
-<div class="card">
-<h3>上传人物照片</h3>
-<label class="upload" for="photoFile">选择照片</label>
-<input id="photoFile" type="file" accept="image/*">
-<img id="photoPreview" class="preview" hidden>
-</div>
-<div class="card">
-<h3>上传人物视频</h3>
-<label class="upload" for="videoFile">选择视频</label>
-<input id="videoFile" type="file" accept="video/*">
-<video id="videoPreview" class="preview" controls hidden></video>
-</div>
-<div class="card">
-<h3>导入 3D 模型</h3>
-<label class="upload" for="modelFile">选择 GLB 模型</label>
-<input id="modelFile" type="file" accept=".glb,.gltf">
-<p id="modelInfo" class="small">选择模型后会显示文件信息。目前尚未接入 3D 模型渲染。</p>
-</div>
-</section>
-
-<section class="page" id="mine">
-<h2>我的</h2>
-<div class="card">
-<h3>个人中心</h3>
-<p>星灵 AI 数字人 · 手机测试版</p>
-</div>
-<div class="card">
-<h3>我的素材</h3>
-<p>照片和视频目前仅在当前设备预览，不会自动上传到云端。</p>
-</div>
-<div class="card">
-<h3>功能状态</h3>
-<p>页面导航：已实现</p>
-<p>照片预览：已实现</p>
-<p>视频预览：已实现</p>
-<p>GLB 模型渲染：尚未接入</p>
-<p>AI 对话与数字人生成：尚未接入</p>
-</div>
-</section>
-</main>
-<nav>
-<button class="active" onclick="showPage('home',this)">⌂ 首页</button>
-<button onclick="showPage('studio',this)">◇ 工作台</button>
-<button onclick="showPage('mine',this)">○ 我的</button>
-</nav>
+<header class="top"><a class="brand" href="#" onclick="showPage('home');return false"><span class="mark"><img src="icon.svg" alt=""></span>鑫灵 AI 数字人</a><nav class="links"><a href="#features">核心能力</a><a href="#about">关于鑫灵</a><a href="#start">开始体验</a></nav><button class="cta" onclick="showPage('studio')">开启创造 ↗</button></header>
+<nav class="mobile-tabs"><button class="active" data-page="home">首页</button><button data-page="studio">数字人工作台</button><button data-page="mine">我的</button></nav>
+<main id="home"><section class="hero"><div><div class="eyebrow">A NEW WAY TO BE YOU</div><h1>让灵感<br>拥有<em>真实</em>形象</h1><p class="lead">从一张照片开始，探索专属于你的 AI 数字分身。定制形象、表达个性，让每一次创作都更接近真实的你。</p><div class="actions"><button class="primary" onclick="showPage('studio')">创建我的数字人 ↗</button><a class="secondary" href="#features">了解更多</a></div><p class="hint">PERSONAL AVATAR · CREATIVE STUDIO · AI EXPERIENCE</p></div><div class="visual"><span class="stamp">YOUR<br>VIRTUAL<br>SELF</span><div class="figure"><svg viewBox="0 0 460 520" aria-label="数字人形象艺术剪影"><defs><linearGradient id="hair" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#f8f4e9"/><stop offset=".55" stop-color="#c5b99f"/><stop offset="1" stop-color="#8e9c83"/></linearGradient><linearGradient id="dress" x1="0" x2="1"><stop stop-color="#fdfcf8"/><stop offset="1" stop-color="#cbd6c6"/></linearGradient></defs><path d="M86 520c6-95 30-161 95-192l16-54h71l20 54c58 28 83 94 91 192" fill="url(#dress)" opacity=".95"/><path d="M137 258c-18-75 1-175 76-201 75-27 144 30 140 112-2 49-23 88-50 123l-15-32c-14-29-26-46-60-48-30-2-54 19-75 48l-16 24z" fill="url(#hair)"/><ellipse cx="230" cy="174" rx="70" ry="93" fill="#f0d9c7"/><path d="M161 159c-1-71 41-114 102-105 47 7 75 50 68 102-25-18-44-45-51-69-32 33-69 50-119 53z" fill="#c3b49c"/><path d="M186 174q16-10 30 0m31 0q16-10 30 0" fill="none" stroke="#786a59" stroke-width="4" stroke-linecap="round"/><path d="M215 210q15 11 30 0" fill="none" stroke="#bb8b7b" stroke-width="3" stroke-linecap="round"/><path d="M145 520q21-145 86-172 61 28 83 172" fill="url(#dress)"/><path d="M170 321q61 28 119 0" fill="none" stroke="#d0b98a" stroke-width="2"/></svg></div><div class="tag"><b>Meet your new self.</b>让数字形象，表达更多可能</div></div></section>
+<section class="section" id="features"><div class="section-inner"><div class="heading"><div class="kicker">DISCOVER XINLING</div><h2>不止是形象，更是你的表达</h2><p>以真实质感为起点，把数字人创作变得简单、自然、有温度。</p></div><div class="grid"><article class="card"><small>01 / AVATAR</small><h3>专属形象定制</h3><p>从个人照片与素材出发，打造具有个人风格的数字形象。</p></article><article class="card"><small>02 / 3D STUDIO</small><h3>3D 数字人工作台</h3><p>规划导入 3D 模型、查看形象细节与模型动画。</p></article><article class="card"><small>03 / VOICE</small><h3>声音与互动</h3><p>后续接入 AI 对话、语音表达与自然口型同步。</p></article><article class="card"><small>04 / STYLE</small><h3>风格与穿搭</h3><p>规划不同服装、造型与场景，呈现多样化的自己。</p></article></div></div></section>
+<section class="band" id="about"><div class="band-inner"><div><div class="kicker">YOUR IDENTITY, REIMAGINED</div><h2>真实一点，自由一点。<br>创造属于你的数字新身份。</h2><p>鑫灵 AI 数字人 · 让科技贴近生活，让创作回归美感。</p></div><button class="primary" onclick="showPage('studio')">探索鑫灵 ↗</button></div></section>
+<section class="section" id="start"><div class="heading"><div class="kicker">START YOUR JOURNEY</div><h2>准备好创造你的数字分身了吗？</h2><p>从灵感到形象，开启你的数字人创作之旅。</p><button class="primary" onclick="showPage('studio')">开始创建 ↗</button></div></section></main>
+<section class="workspace" id="studio"><div class="kicker">XINLING CREATIVE STUDIO</div><h2>数字人工作台</h2><p class="hint">当前为前端体验版。照片和视频仅在本机浏览器预览，不会上传云端；刷新后需要重新选择素材。</p><div class="panel"><h3>上传形象素材</h3><label class="upload">选择照片或视频<br><input id="media" type="file" accept="image/*,video/*"></label><div id="preview" class="hint">尚未选择素材</div></div><div class="panel"><h3>导入已有 3D 模型</h3><p class="hint">可选择 GLB 文件查看文件信息；当前未接入模型渲染或照片转 3D 生成。</p><input id="model" type="file" accept=".glb,model/gltf-binary"><div id="modelStatus" class="status">尚未选择模型</div></div><div class="panel"><h3>AI 对话与动作</h3><p class="hint">DeepSeek 对话、语音、口型同步、骨骼动作和云端保存尚未接入服务端，接通前不可真实使用。</p><div class="status">开发状态：待接入</div></div></section>
+<section class="workspace" id="mine"><div class="kicker">YOUR XINLING</div><h2>我的</h2><div class="panel"><h3>鑫灵 AI 账户</h3><p class="hint">当前版本尚未加入登录账户和云端个人资料。</p></div><div class="panel"><h3>素材与隐私</h3><p class="hint">选取的素材仅在当前浏览器会话中预览，不会自动上传云端。</p></div><div class="panel"><h3>版本信息</h3><p class="hint">鑫灵 AI · 时尚清新体验版</p></div></section>
+<nav class="bottom"><button class="active" data-page="home"><span>⌂</span>首页</button><button data-page="studio"><span>✧</span>工作台</button><button data-page="mine"><span>♡</span>我的</button></nav>
+<footer class="footer"><span>© 2026 鑫灵 AI 数字人 · XINLING AI</span><span>清新写实 · 时尚美学 · 真实表达</span></footer>
 <script>
-function showPage(id,btn){
-document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-document.getElementById(id).classList.add('active');
-document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
-if(btn)btn.classList.add('active');
-else document.querySelectorAll('nav button')[1].classList.add('active');
-window.scrollTo(0,0);
-}
-document.getElementById('photoFile').onchange=e=>{
-const f=e.target.files[0];if(!f)return;
-const img=document.getElementById('photoPreview');
-img.src=URL.createObjectURL(f);img.hidden=false;
-};
-document.getElementById('videoFile').onchange=e=>{
-const f=e.target.files[0];if(!f)return;
-const v=document.getElementById('videoPreview');
-v.src=URL.createObjectURL(f);v.hidden=false;
-};
-document.getElementById('modelFile').onchange=e=>{
-const f=e.target.files[0];if(!f)return;
-document.getElementById('modelInfo').textContent='已选择：'+f.name+'（'+(f.size/1024/1024).toFixed(2)+' MB）。目前仅识别文件，尚未显示 3D 模型。';
-};
-</script>
-</body>
-</html>
+function showPage(name){document.querySelector('main').style.display=name==='home'?'block':'none';document.querySelectorAll('.workspace').forEach(x=>x.style.display=x.id===name?'block':'none');document.querySelectorAll('[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===name));window.scrollTo({top:0,behavior:'smooth'});}
+document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
+let u=null;document.getElementById('media').addEventListener('change',e=>{const f=e.target.files[0],p=document.getElementById('preview');if(u)URL.revokeObjectURL(u);if(!f){p.textContent='尚未选择素材';return}u=URL.createObjectURL(f);const el=document.createElement(f.type.startsWith('video/')?'video':'img');el.src=u;el.className='preview';if(el.tagName==='VIDEO'){el.controls=true;el.playsInline=true}p.replaceChildren(document.createTextNode(f.name+' · '+(f.size/1048576).toFixed(2)+' MB'),el)});
+document.getElementById('model').addEventListener('change',e=>{const f=e.target.files[0];document.getElementById('modelStatus').textContent=f?'已选择 '+f.name+'（'+(f.size/1048576).toFixed(2)+' MB），当前仅识别文件，尚未上传或解析。':'尚未选择模型'});
+</script></body></html>
