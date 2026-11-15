@@ -1,0 +1,12 @@
+{
+  "name": "digital-human-iphone-demo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "preview": "wrangler preview"
+  },
+  "devDependencies": {
+    "wrangler": "^4.68.0"
+  }
+}
