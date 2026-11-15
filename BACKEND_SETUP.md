@@ -1,4 +1,4 @@
-# 鑫灵 AI 后端与云端素材库（Cloudflare Pages Functions）
+> **当前部署方式已更新：** 本仓库现在优先使用 Cloudflare Workers Builds（Worker + Static Assets），请先看 [`WORKER_DEPLOYMENT.md`](./WORKER_DEPLOYMENT.md)。本文后续的 Pages Functions 部署说明是旧方案，不要与当前 Worker 部署设置混用。\n\n# 鑫灵 AI 后端与云端素材库（Cloudflare Pages Functions）
 
 ## 测试版接口
 - `GET /api/health`：检查 DeepSeek、内部测试口令、R2 云存储绑定状态。
