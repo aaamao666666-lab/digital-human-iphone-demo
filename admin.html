@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f5f4ee">
+<title>鑫灵 AI · 素材管理后台</title>
+<style>
+:root{--bg:#f5f4ee;--paper:#fffefa;--ink:#2d322b;--muted:#85887e;--sage:#6d8169;--line:#e6e4da;--danger:#a56d62}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+button,input{font:inherit}a{color:inherit;text-decoration:none}
+.top{height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid var(--line);background:#f8f7f1}
+.brand{display:flex;gap:10px;align-items:center;font-weight:650;letter-spacing:.5px}.mark{width:32px;height:32px;border-radius:11px;background:#e6ebe1;display:grid;place-items:center;color:var(--sage)}
+.back{font-size:12px;color:var(--sage);border:1px solid #d5ddcf;border-radius:22px;padding:9px 13px}
+main{max-width:980px;margin:0 auto;padding:28px 18px calc(40px + env(safe-area-inset-bottom))}
+.eyebrow{font-size:10px;letter-spacing:2px;color:var(--sage);text-transform:uppercase}
+h1{font-family:"Songti SC",STSong,serif;font-weight:500;font-size:34px;margin:9px 0 8px}
+.sub{font-size:12px;color:var(--muted);line-height:1.8;margin:0 0 22px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:17px;padding:18px;margin:14px 0}
+.card h2{font-size:16px;margin:0 0 8px;font-weight:650}
+.note{font-size:11px;line-height:1.7;color:var(--muted)}
+.row{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.key-input{min-width:0;flex:1;border:1px solid #d9ddd2;border-radius:11px;padding:12px;background:white;font-size:13px}
+.btn{border:0;border-radius:11px;background:var(--sage);color:white;padding:12px 16px;font-size:12px;cursor:pointer}
+.btn.secondary{background:#edf0e8;color:#53694f}.btn.danger{background:#f4eae6;color:var(--danger)}
+.btn:disabled{opacity:.45;cursor:default}
+.status{font-size:11px;line-height:1.7;color:var(--muted);margin-top:10px;white-space:pre-wrap}
+.status.good{color:#5c7b5d}.status.bad{color:#a3655a}
+.statusline{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.health{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;background:#f0f2eb;border-radius:30px;font-size:10px;color:#657a60}
+.dot{width:7px;height:7px;border-radius:50%;background:#a5a89c}.dot.ok{background:#789773}.dot.no{background:#bd8b77}
+.drop{border:1px dashed #b9c7b2;border-radius:14px;background:#f7f8f3;padding:22px 15px;text-align:center}
+.drop strong{display:block;font-size:14px;margin-bottom:7px}.drop p{font-size:11px;color:var(--muted);line-height:1.7;margin:0 0 12px}
+input[type=file]{display:block;max-width:100%;margin:auto;font-size:11px}
+.progress{height:5px;background:#eceee8;border-radius:9px;overflow:hidden;margin-top:12px}.bar{height:100%;width:0;background:#82977d;transition:width .12s}
+.toolbar{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.filter{border:1px solid #dfe2d9;background:white;border-radius:20px;padding:7px 11px;color:#72786c;font-size:10px}
+.filter.active{background:#6d8169;color:white;border-color:#6d8169}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.item{min-width:0;border:1px solid var(--line);border-radius:13px;overflow:hidden;background:#fff}
+.thumb{height:160px;background:#eef0e9;display:grid;place-items:center;overflow:hidden;position:relative}
+.thumb img,.thumb video{width:100%;height:100%;object-fit:cover;display:block}
+.fileicon{font-size:28px;color:#87917f}
+.itembody{padding:10px}
+.name{font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta{font-size:9px;color:#96988e;margin:5px 0 9px}
+.actions{display:flex;gap:6px}.actions button{flex:1;padding:7px 5px;font-size:10px;border-radius:8px}
+.empty{border:1px dashed var(--line);border-radius:13px;padding:28px 12px;text-align:center;color:#999b91;font-size:11px;line-height:1.8}
+.modal{position:fixed;inset:0;z-index:9;background:#111a;display:none;align-items:center;justify-content:center;padding:20px}
+.modal.open{display:flex}.modalbox{max-width:min(720px,100%);max-height:85dvh;background:#fff;border-radius:16px;padding:12px;width:100%;overflow:auto}
+.modalhead{display:flex;justify-content:space-between;align-items:center;padding:4px 4px 12px;font-size:12px}.modalbody img,.modalbody video{max-width:100%;max-height:70dvh;display:block;margin:auto}
+.footnote{font-size:10px;color:#99998e;line-height:1.8;margin:18px 2px}
+@media(max-width:640px){main{padding:23px 14px 40px}h1{font-size:30px}.card{padding:15px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.thumb{height:145px}.toolbar{align-items:flex-start}}
+@media(max-width:360px){.grid{grid-template-columns:1fr 1fr}.thumb{height:125px}.btn{padding:11px 12px}}
+</style>
+</head>
+<body>
+<header class="top"><a class="brand" href="/"><span class="mark">✳</span><span>鑫灵 AI <small style="font-weight:400;color:#92968b">后台管理</small></span></a><a class="back" href="/">返回首页 ↗</a></header>
+<main>
+  <div class="eyebrow">XINLING CONTROL CENTER</div>
+  <h1>素材管理</h1>
+  <p class="sub">手机也能直接上传、预览和整理人物照片、视频及 3D 模型。素材默认保存在私有云端，不会自动公开到首页。</p>
+
+  <section class="card">
+    <div class="statusline"><h2>后台连接</h2><span class="health"><i class="dot" id="healthDot"></i><span id="healthLabel">检查中</span></span></div>
+    <div class="row">
+      <input id="accessKey" class="key-input" type="password" autocomplete="current-password" placeholder="输入管理员访问口令">
+      <button class="btn" id="connectBtn">连接后台</button>
+    </div>
+    <div class="status" id="connectionStatus">访问口令只保存在当前浏览器标签页会话中。</div>
+  </section>
+
+  <section class="card">
+    <h2>上传新素材</h2>
+    <p class="note">支持 JPG、PNG、WEBP、GIF、MP4、MOV、WEBM、GLB、GLTF；单个文件最大 50 MB，可一次选择多个文件。</p>
+    <div class="drop">
+      <strong>选择手机里的照片、视频或 3D 模型</strong>
+      <p>iPhone 可从照片图库或“文件”中选择。上传完成后会出现在下方素材库。</p>
+      <input id="files" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/quicktime,video/webm,.glb,.gltf" multiple>
+      <div class="progress"><div class="bar" id="progressBar"></div></div>
+      <div class="status" id="uploadStatus">等待选择文件</div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="toolbar"><div><h2 style="margin-bottom:4px">云端素材库</h2><div class="note" id="countLabel">尚未加载</div></div><button class="btn secondary" id="refreshBtn">刷新素材</button></div>
+    <div class="toolbar"><div class="filters">
+      <button class="filter active" data-filter="all">全部</button>
+      <button class="filter" data-filter="image">图片</button>
+      <button class="filter" data-filter="video">视频</button>
+      <button class="filter" data-filter="model">3D 模型</button>
+    </div></div>
+    <div class="grid" id="assetGrid"><div class="empty" style="grid-column:1/-1">连接后台后，这里会显示已上传的素材。</div></div>
+  </section>
+  <p class="footnote">后台安全说明：当前使用内部访问口令，不是完整的多用户账号系统。请勿把访问口令分享给他人。R2 未绑定或 Worker 尚未部署最新代码时，上传功能会明确提示未连接，不会假装上传成功。</p>
+</main>
+<div class="modal" id="previewModal" role="dialog" aria-modal="true" aria-label="素材预览"><div class="modalbox"><div class="modalhead"><strong id="previewTitle">素材预览</strong><button class="btn secondary" id="closePreview">关闭</button></div><div class="modalbody" id="previewBody"></div></div></div>
+<script>
+const API_ORIGIN='https://digital-human-iphone-demo.aaamao666666.workers.dev';
+const API=(location.hostname.endsWith('workers.dev')?location.origin:API_ORIGIN);
+const $=id=>document.getElementById(id);
+let key=sessionStorage.getItem('xinling_admin_key')||'';
+let items=[],filter='all',activeUrls=[];
+$('accessKey').value=key;
+const headers=()=>({'x-app-access-key':key});
+function setStatus(id,msg,type=''){const el=$(id);el.textContent=msg;el.className='status '+type;}
+function prettySize(n){return n<1048576?(n/1024).toFixed(0)+' KB':(n/1048576).toFixed(2)+' MB';}
+async function checkHealth(){
+ try{
+  const r=await fetch(API+'/api/health',{cache:'no-store'}),d=await r.json();
+  const ok=r.ok&&d.ok; $('healthDot').className='dot '+(ok?'ok':'no');
+  $('healthLabel').textContent=ok?(d.cloudStorageConfigured?'云存储已连接':'后端在线，云存储未连接'):'后端未连接';
+  if(!d.cloudStorageConfigured)setStatus('connectionStatus','后端已响应，但还没有检测到 XINLING_MEDIA R2 绑定。请先在 Cloudflare Worker Production 环境绑定存储桶。','bad');
+  else if(!d.accessGateConfigured)setStatus('connectionStatus','缺少后台访问口令配置 APP_TEST_KEY。','bad');
+  return d;
+ }catch(e){$('healthDot').className='dot no';$('healthLabel').textContent='连接失败';setStatus('connectionStatus','无法连接 Cloudflare 后端：'+e.message,'bad');return null;}
+}
+async function connect(){
+ key=$('accessKey').value.trim();
+ if(!key){setStatus('connectionStatus','请先输入管理员访问口令。','bad');return;}
+ sessionStorage.setItem('xinling_admin_key',key);
+ setStatus('connectionStatus','正在验证访问权限…');
+ try{
+  const r=await fetch(API+'/api/assets',{headers:headers(),cache:'no-store'}),d=await r.json();
+  if(!r.ok)throw new Error(d.error||'验证失败：HTTP '+r.status);
+  setStatus('connectionStatus','已连接后台，云端素材库可用。','good');
+  render(d.items||[]);return true;
+ }catch(e){sessionStorage.removeItem('xinling_admin_key');key='';setStatus('connectionStatus',e.message,'bad');return false;}
+}
+function render(list){
+ items=list; $('countLabel').textContent='共 '+items.length+' 份素材';
+ const grid=$('assetGrid');grid.replaceChildren();
+ const shown=items.filter(x=>filter==='all'||x.kind===filter);
+ if(!shown.length){const empty=document.createElement('div');empty.className='empty';empty.style.gridColumn='1/-1';empty.textContent=items.length?'这个分类暂时没有素材。':'云端素材库还是空的，先上传一张人物照片或一段视频吧。';grid.append(empty);return;}
+ shown.forEach(item=>{
+  const card=document.createElement('article');card.className='item';
+  const thumb=document.createElement('div');thumb.className='thumb';
+  const icon=document.createElement('div');icon.className='fileicon';icon.textContent=item.kind==='video'?'▶':item.kind==='image'?'▧':'◇';thumb.append(icon);
+  const body=document.createElement('div');body.className='itembody';
+  const name=document.createElement('div');name.className='name';name.textContent=item.name;name.title=item.name;
+  const meta=document.createElement('div');meta.className='meta';meta.textContent=(item.kind==='image'?'图片':item.kind==='video'?'视频':'3D 模型')+' · '+prettySize(item.size);
+  const actions=document.createElement('div');actions.className='actions';
+  const view=document.createElement('button');view.className='btn secondary';view.textContent='预览';view.onclick=()=>preview(item);
+  const del=document.createElement('button');del.className='btn danger';del.textContent='删除';del.onclick=()=>removeItem(item);
+  actions.append(view,del);body.append(name,meta,actions);card.append(thumb,body);grid.append(card);
+ });
+}
+async function loadItems(){
+ if(!key){setStatus('connectionStatus','请先连接后台。','bad');return;}
+ $('refreshBtn').disabled=true;
+ try{const r=await fetch(API+'/api/assets',{headers:headers(),cache:'no-store'}),d=await r.json();if(!r.ok)throw new Error(d.error||'读取素材失败');render(d.items||[]);setStatus('connectionStatus','素材库已同步。','good');}
+ catch(e){setStatus('connectionStatus',e.message,'bad');}
+ finally{$('refreshBtn').disabled=false;}
+}
+function uploadOne(file,index,total){
+ return new Promise((resolve,reject)=>{
+  const xhr=new XMLHttpRequest();xhr.open('POST',API+'/api/assets');
+  xhr.setRequestHeader('content-type',file.type||'application/octet-stream');
+  xhr.setRequestHeader('x-file-name',encodeURIComponent(file.name));
+  xhr.setRequestHeader('x-app-access-key',key);
+  xhr.upload.onprogress=e=>{if(e.lengthComputable){const base=(index/total)*100;const part=(e.loaded/e.total)*(100/total);$('progressBar').style.width=(base+part)+'%';}};
+  xhr.onload=()=>{let d={};try{d=JSON.parse(xhr.responseText);}catch{};if(xhr.status>=200&&xhr.status<300)resolve(d.item);else reject(new Error(d.error||('上传失败：HTTP '+xhr.status)));};
+  xhr.onerror=()=>reject(new Error('网络中断，上传未完成。'));
+  xhr.send(file);
+ });
+}
+$('files').addEventListener('change',async()=>{
+ const files=[...$('files').files];if(!files.length)return;
+ if(!key){setStatus('uploadStatus','请先连接后台。','bad');$('files').value='';return;}
+ $('files').disabled=true;$('progressBar').style.width='0%';
+ let done=0,fail=[];
+ for(let i=0;i<files.length;i++){
+  const file=files[i];
+  if(file.size>50*1024*1024){fail.push(file.name+'：超过 50 MB');continue;}
+  setStatus('uploadStatus','正在上传 '+(i+1)+'/'+files.length+'：'+file.name);
+  try{await uploadOne(file,i,files.length);done++;}catch(e){fail.push(file.name+'：'+e.message);}
+ }
+ $('progressBar').style.width='100%';$('files').disabled=false;$('files').value='';
+ setStatus('uploadStatus','完成 '+done+' 个'+(fail.length?'；失败 '+fail.length+' 个：\n'+fail.join('\n'):'。'),fail.length?'bad':'good');
+ await loadItems();
+});
+async function preview(item){
+ $('previewTitle').textContent=item.name;$('previewBody').textContent='正在读取素材…';$('previewModal').classList.add('open');
+ try{
+  const r=await fetch(API+'/api/assets/'+encodeURIComponent(item.id),{headers:headers(),cache:'no-store'});if(!r.ok){const d=await r.json().catch(()=>({}));throw new Error(d.error||'预览失败');}
+  const blob=await r.blob(),url=URL.createObjectURL(blob);activeUrls.push(url);
+  let el;if(item.kind==='image'){el=document.createElement('img');el.src=url;}
+  else if(item.kind==='video'){el=document.createElement('video');el.src=url;el.controls=true;el.playsInline=true;el.preload='metadata';}
+  else{const a=document.createElement('a');a.href=url;a.download=item.name;a.textContent='下载 GLB 模型文件';a.className='back';$('previewBody').replaceChildren(a);return;}
+  $('previewBody').replaceChildren(el);
+ }catch(e){$('previewBody').textContent=e.message;}
+}
+function closePreview(){ $('previewModal').classList.remove('open');$('previewBody').replaceChildren();activeUrls.forEach(URL.revokeObjectURL);activeUrls=[];}
+async function removeItem(item){
+ if(!confirm('确定删除「'+item.name+'」吗？此操作无法撤销。'))return;
+ try{const r=await fetch(API+'/api/assets/'+encodeURIComponent(item.id),{method:'DELETE',headers:headers()});const d=await r.json();if(!r.ok)throw new Error(d.error||'删除失败');await loadItems();}
+ catch(e){alert(e.message);}
+}
+$('connectBtn').addEventListener('click',connect);
+$('refreshBtn').addEventListener('click',loadItems);
+$('closePreview').addEventListener('click',closePreview);
+$('previewModal').addEventListener('click',e=>{if(e.target===$('previewModal'))closePreview();});
+document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{filter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x===b));render(items);}));
+checkHealth();
+if(key)connect();
+</script>
+</body></html>
