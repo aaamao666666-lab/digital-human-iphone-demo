@@ -18,8 +18,14 @@
 <section class="section" id="features"><div class="section-inner"><div class="section-head"><div class="kicker">DISCOVER XINLING</div><h2>不止是形象，更是你的表达</h2><p>以真实质感为起点，把数字人创作变得简单、自然、有温度。</p></div><div class="features"><article class="feature"><div class="num">01 / AVATAR</div><h3>专属形象定制</h3><p>从个人照片与素材出发，打造具有个人风格的数字形象。</p></article><article class="feature"><div class="num">02 / 3D STUDIO</div><h3>3D 数字人工作台</h3><p>导入 3D 模型，查看形象细节与模型动画。</p></article><article class="feature"><div class="num">03 / VOICE</div><h3>声音与互动</h3><p>逐步接入 AI 对话、语音表达与自然口型同步。</p></article><article class="feature"><div class="num">04 / STYLE</div><h3>风格与穿搭</h3><p>探索不同服装、造型与场景，呈现多样化的自己。</p></article></div></div></section>
 <section class="band" id="about"><div class="band-inner"><div><div class="kicker">YOUR IDENTITY, REIMAGINED</div><h2>真实一点，自由一点。<br>创造属于你的数字新身份。</h2><p>鑫灵 AI 数字人 · 让科技贴近生活，让创作回归美感。</p></div><a class="primary" href="#start">探索鑫灵&nbsp; ↗</a></div></section>
 <section class="section" id="start"><div class="section-inner" style="text-align:center"><div class="kicker">START YOUR JOURNEY</div><h2>准备好创造你的数字分身了吗？</h2><p style="color:#77796f;font-size:14px;margin-bottom:25px">从灵感到形象，开启你的数字人创作之旅。</p><button class="primary" data-open-studio="true">开始创建&nbsp; ↗</button></div></section></main>
-<section class="workspace" id="studio"><div class="kicker">XINLING CREATIVE STUDIO</div><h2>数字人工作台</h2><p class="hint">先整理你的形象素材。当前支持本机临时预览；刷新或关闭页面后需要重新选择文件，尚未上传云端。</p><div class="panel"><h3>上传形象素材</h3><div class="upload-zone"><div>选择照片或视频</div><p class="hint">支持 JPG、PNG、MP4、MOV</p><input id="mediaInput" type="file" accept="image/*,video/*"></div><div id="mediaPreview" class="hint" aria-live="polite">尚未选择素材</div></div><div class="panel"><h3>导入已有 3D 模型</h3><p class="hint">支持选择 GLB 文件。当前版本只记录文件名称，不会上传或生成新模型。</p><input id="modelInput" type="file" accept=".glb,model/gltf-binary"><div id="modelStatus" class="status">尚未选择模型</div><div class="viewer" id="modelViewer"><div id="viewerPlaceholder">选择一个 GLB 模型<br>在这里旋转、缩放和查看模型动画</div><canvas id="modelCanvas"></canvas></div><div class="viewer-tools"><button id="animationToggle" type="button" disabled>暂停动画</button><button id="resetCamera" type="button" disabled>重置视角</button></div><div class="viewer-note">模型在当前手机浏览器本机解析和显示，不会上传云端。建议先使用 50 MB 以下的 GLB 文件。</div></div><div class="panel"><h3>鑫灵 AI 对话</h3><p class="hint">当后端接通并配置密钥后，可在这里真实调用 DeepSeek。网页不会直接保存 DeepSeek API Key。</p><div id="apiStatus" class="chat-status">正在检查后端状态…</div><div class="access-row"><input id="appTestKey" type="password" autocomplete="off" placeholder="内部测试口令（由管理员配置）"><button class="secondary" id="saveTestKey" type="button">保存</button></div><div class="chat-log" id="chatLog" aria-live="polite"><div class="chat-bubble assistant">你好，我是鑫灵 AI 助手。后端配置完成后，我们可以在这里开始对话。</div></div><div class="chat-row"><input id="chatMessage" type="text" maxlength="2000" placeholder="输入你想说的话…" autocomplete="off"><button id="sendChat" type="button">发送</button></div><div class="status" id="chatFeedback">测试口令只保存在当前浏览器会话中，关闭标签页后清除。</div></div><div class="panel"><h3>数字人动作与生成</h3><p class="hint">照片生成 3D、骨骼动作绑定、面部表情、语音和口型同步仍需接入专门的生成与驱动服务，当前尚未实现。</p><span class="status">开发状态：待接入</span></div></section>
-<section class="workspace" id="mine"><div class="kicker">YOUR XINLING</div><h2>我的</h2><div class="panel"><h3>鑫灵 AI 账户</h3><p class="hint">当前为体验版，没有登录账户或云端个人资料。</p></div><div class="panel"><h3>我的素材</h3><p class="hint">照片和视频仅在当前浏览器会话中预览，不会自动上传云端。</p></div><div class="panel"><h3>版本信息</h3><p class="hint">鑫灵 AI · 清新写实体验版</p></div></section>
+<section class="workspace" id="studio"><div class="kicker">XINLING CREATIVE STUDIO</div><h2>数字人工作台</h2><p class="hint">内部测试素材统一上传到私有云端素材库。需要完成 Cloudflare 部署并绑定 R2 后才能真正启用。</p>
+<div class="panel"><h3>内部测试访问</h3><p class="hint">输入管理员配置的测试口令。口令只保存在当前浏览器标签页会话中。</p><div class="access-row"><input id="appTestKey" type="password" autocomplete="off" placeholder="内部测试口令"><button class="secondary" id="saveTestKey" type="button">保存并连接</button></div><div id="apiStatus" class="chat-status">正在检查云端后端…</div></div>
+<div class="panel"><h3>上传照片或视频到云端</h3><p class="hint">支持 JPG、PNG、WEBP、GIF、MP4、MOV、WEBM；单个文件最大 50 MB。</p><div class="upload-zone"><div>选择照片或视频</div><input id="mediaInput" type="file" accept="image/*,video/*"></div><div id="mediaPreview" class="hint" aria-live="polite">选择文件后自动上传到私有云端。</div></div>
+<div class="panel"><h3>导入并保存 3D 模型</h3><p class="hint">支持 GLB 模型。选取后会先在本机预览，同时上传至私有云端素材库。</p><input id="modelInput" type="file" accept=".glb,model/gltf-binary,model/gltf+json"><div id="modelStatus" class="status">尚未选择模型</div><div class="viewer" id="modelViewer"><div id="viewerPlaceholder">选择一个 GLB 模型<br>在这里旋转、缩放和查看模型动画</div><canvas id="modelCanvas"></canvas></div><div class="viewer-tools"><button id="animationToggle" type="button" disabled>暂停动画</button><button id="resetCamera" type="button" disabled>重置视角</button></div><div class="viewer-note">云端保存与本机预览是两件事：模型会私有保存，但不会公开生成下载链接。</div></div>
+<div class="panel"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><h3 style="margin:0">我的云端素材</h3><button class="secondary" id="refreshAssets" type="button">刷新</button></div><div id="cloudAssetsList" class="hint" style="margin-top:14px">连接云端后显示已上传素材。</div><div id="assetPreview" style="margin-top:14px"></div></div>
+<div class="panel"><h3>鑫灵 AI 对话</h3><p class="hint">DeepSeek API Key 由服务器 Secret 保管，网页不直接接触密钥。</p><div class="chat-log" id="chatLog" aria-live="polite"><div class="chat-bubble assistant">你好，我是鑫灵 AI 助手。完成后端配置后就可以开始对话。</div></div><div class="chat-row"><input id="chatMessage" type="text" maxlength="2000" placeholder="输入你想说的话…" autocomplete="off"><button id="sendChat" type="button">发送</button></div><div class="status" id="chatFeedback">内部测试模式。</div></div>
+<div class="panel"><h3>数字人动作与生成</h3><p class="hint">照片自动生成 3D、骨骼动作绑定、面部表情、语音和口型同步仍需专用生成服务，尚未接入。你上传的原始素材会先安全保存在私有云端。</p><span class="status">开发状态：待接入</span></div></section>
+<section class="workspace" id="mine"><div class="kicker">YOUR XINLING</div><h2>我的</h2><div class="panel"><h3>鑫灵 AI 账户</h3><p class="hint">当前为体验版，没有登录账户或云端个人资料。</p></div><div class="panel"><h3>我的素材</h3><p class="hint">内部测试照片、视频和模型上传后保存在私有云端素材库，可在工作台查看与删除。</p></div><div class="panel"><h3>版本信息</h3><p class="hint">鑫灵 AI · 清新写实体验版</p></div></section>
 <nav class="bottom-nav" aria-label="底部导航"><button class="active" data-page="home"><span>⌂</span>首页</button><button data-page="studio"><span>✧</span>工作台</button><button data-page="mine"><span>♡</span>我的</button></nav>
 <footer class="footer"><span>© 2026 鑫灵 AI 数字人 · XINLING AI</span><span>清新写实 · 时尚美学 · 真实表达</span></footer>
 <script>
@@ -28,7 +34,67 @@ document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',(
 document.querySelectorAll('[data-open-studio]').forEach(b=>b.addEventListener('click',()=>showPage('studio')));
 document.querySelectorAll('a[href="#start"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();showPage('studio')}));
 let currentPreviewUrl=null;
-document.getElementById('mediaInput').addEventListener('change',e=>{const f=e.target.files[0],box=document.getElementById('mediaPreview');if(currentPreviewUrl)URL.revokeObjectURL(currentPreviewUrl);if(!f){box.textContent='尚未选择素材';return;}currentPreviewUrl=URL.createObjectURL(f);const el=document.createElement(f.type.startsWith('video/')?'video':'img');el.src=currentPreviewUrl;el.className='preview';if(el.tagName==='VIDEO'){el.controls=true;el.playsInline=true;}box.replaceChildren(document.createTextNode(f.name+' · '+(f.size/1024/1024).toFixed(2)+' MB'),el);});
+async function uploadToCloud(file){
+ const key=window.xinlingGetTestKey();
+ if(!key) throw new Error('请先填写并保存内部测试口令。');
+ if(file.size>50*1024*1024) throw new Error('单个文件最大 50 MB，请先压缩。');
+ const response=await fetch('./api/assets',{method:'POST',headers:{'content-type':file.type||'application/octet-stream','x-file-name':encodeURIComponent(file.name),'x-app-access-key':key},body:file});
+ const data=await response.json();
+ if(!response.ok) throw new Error(data.error||('上传失败：'+response.status));
+ return data.item;
+}
+window.xinlingGetTestKey=()=>sessionStorage.getItem('xinling_test_key')||'';
+window.xinlingUploadAsset=uploadToCloud;
+async function refreshCloudAssets(){
+ const list=document.getElementById('cloudAssetsList'),key=window.xinlingGetTestKey();
+ if(!key){list.textContent='先填写内部测试口令，再读取云端素材。';return;}
+ list.textContent='正在读取云端素材…';
+ try{
+  const res=await fetch('./api/assets',{headers:{'x-app-access-key':key},cache:'no-store'});
+  const data=await res.json();if(!res.ok)throw new Error(data.error||('读取失败：'+res.status));
+  list.replaceChildren();
+  if(!data.items.length){list.textContent='云端还没有素材。';return;}
+  data.items.forEach(item=>{
+   const row=document.createElement('div');row.style.cssText='display:flex;gap:10px;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #e8e8df';
+   const info=document.createElement('div');info.style.cssText='min-width:0;flex:1';
+   const name=document.createElement('div');name.textContent=item.name;name.style.cssText='font-size:13px;color:#3c473b;word-break:break-word';
+   const meta=document.createElement('div');meta.textContent=item.kind+' · '+(item.size/1048576).toFixed(2)+' MB';meta.style.cssText='font-size:11px;color:#92958b;margin-top:4px';
+   info.append(name,meta);
+   const actions=document.createElement('div');actions.style.cssText='display:flex;gap:6px;flex-shrink:0';
+   const preview=document.createElement('button');preview.textContent='查看';preview.className='secondary';preview.type='button';preview.style.padding='8px 11px';preview.addEventListener('click',()=>previewCloudAsset(item));
+   const del=document.createElement('button');del.textContent='删除';del.className='secondary';del.type='button';del.style.cssText='padding:8px 11px;color:#9b6e64;border-color:#e2d6d1';del.addEventListener('click',()=>deleteCloudAsset(item));
+   actions.append(preview,del);row.append(info,actions);list.append(row);
+  });
+ }catch(error){list.textContent=error.message||'无法读取云端素材。';}
+}
+async function previewCloudAsset(item){
+ const box=document.getElementById('assetPreview');box.textContent='正在读取云端文件…';
+ try{
+  const res=await fetch('./api/assets/'+encodeURIComponent(item.id),{headers:{'x-app-access-key':window.xinlingGetTestKey()},cache:'no-store'});
+  if(!res.ok){const d=await res.json().catch(()=>({}));throw new Error(d.error||'读取失败');}
+  const blob=await res.blob(),url=URL.createObjectURL(blob),el=document.createElement(item.kind==='video'?'video':'img');
+  if(item.kind==='model'){URL.revokeObjectURL(url);box.textContent='这是一份云端 GLB 模型。重新选择该模型文件可在上方 3D 视窗中预览。';return;}
+  el.src=url;el.className='preview';if(item.kind==='video'){el.controls=true;el.playsInline=true;}
+  box.replaceChildren(el);
+ }catch(error){box.textContent=error.message||'无法预览云端素材。';}
+}
+async function deleteCloudAsset(item){
+ if(!confirm('确定删除云端素材「'+item.name+'」吗？删除后无法恢复。'))return;
+ try{
+  const res=await fetch('./api/assets/'+encodeURIComponent(item.id),{method:'DELETE',headers:{'x-app-access-key':window.xinlingGetTestKey()}});
+  const data=await res.json();if(!res.ok)throw new Error(data.error||'删除失败');
+  document.getElementById('assetPreview').textContent='素材已从云端删除。';refreshCloudAssets();
+ }catch(error){alert(error.message||'删除失败');}
+}
+document.getElementById('mediaInput').addEventListener('change',async e=>{
+ const f=e.target.files[0],box=document.getElementById('mediaPreview');if(!f)return;
+ if(currentPreviewUrl)URL.revokeObjectURL(currentPreviewUrl);
+ currentPreviewUrl=URL.createObjectURL(f);const el=document.createElement(f.type.startsWith('video/')?'video':'img');el.src=currentPreviewUrl;el.className='preview';if(el.tagName==='VIDEO'){el.controls=true;el.playsInline=true;}
+ box.replaceChildren(document.createTextNode('本机预览：'+f.name+' · '+(f.size/1048576).toFixed(2)+' MB'),el);
+ const state=document.createElement('div');state.className='status';state.textContent='正在上传到私有云端…';box.append(state);
+ try{const item=await uploadToCloud(f);state.textContent='已上传到云端素材库：'+item.name;refreshCloudAssets();}
+ catch(error){state.textContent='云端上传未成功：'+(error.message||'未知错误');}
+});
 
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}
 
@@ -44,7 +110,10 @@ testKeyInput.value = sessionStorage.getItem('xinling_test_key') || '';
 saveTestKey.addEventListener('click', () => {
   sessionStorage.setItem('xinling_test_key', testKeyInput.value.trim());
   chatFeedback.textContent = '测试口令已保存在当前标签页会话中。';
+  checkApiHealth();
+  refreshCloudAssets();
 });
+document.getElementById('refreshAssets').addEventListener('click', refreshCloudAssets);
 function addChatBubble(role, text) {
   const node = document.createElement('div');
   node.className = 'chat-bubble ' + role;
@@ -57,11 +126,12 @@ async function checkApiHealth() {
     const response = await fetch('./api/health', {cache:'no-store'});
     if (!response.ok) throw new Error('HTTP ' + response.status);
     const data = await response.json();
-    apiStatus.textContent = data.deepseekConfigured && data.accessGateConfigured
-      ? '后端在线 · DeepSeek 与内部测试口令已配置'
-      : '后端在线，但仍缺少 ' + [!data.deepseekConfigured ? 'DeepSeek 密钥' : '', !data.accessGateConfigured ? '内部测试口令' : ''].filter(Boolean).join('、');
+    apiStatus.textContent = data.cloudStorageConfigured && data.accessGateConfigured
+      ? '云端后端在线 · 私有素材库已连接' + (data.deepseekConfigured ? ' · DeepSeek 已配置' : ' · DeepSeek 待配置')
+      : '后端已响应，但仍缺少 ' + [!data.cloudStorageConfigured ? 'R2 云存储绑定' : '', !data.accessGateConfigured ? '内部测试口令' : ''].filter(Boolean).join('、');
+    if (data.cloudStorageConfigured && data.accessGateConfigured) refreshCloudAssets();
   } catch (error) {
-    apiStatus.textContent = '后端尚未接通。当前 GitHub Pages 只托管网页，不运行 API。';
+    apiStatus.textContent = '当前网址还没有运行 Cloudflare 后端。需先完成 Cloudflare Pages 与私有 R2 绑定，GitHub Pages 不运行这些 API。';
   }
 }
 sendChat.addEventListener('click', async () => {
@@ -196,7 +266,7 @@ function clearPreviousModel() {
   activeModel = null;
 }
 
-modelInput.addEventListener('change', event => {
+modelInput.addEventListener('change', async event => {
   const file = event.target.files && event.target.files[0];
   if (!file) return;
   if (!file.name.toLowerCase().endsWith('.glb')) {
@@ -209,6 +279,17 @@ modelInput.addEventListener('change', event => {
   }
   if (!setupViewer()) return;
   status.textContent = '正在读取模型：' + file.name;
+  if (window.xinlingUploadAsset) {
+    try {
+      await window.xinlingUploadAsset(file);
+      const msg = '已上传到私有云端：' + file.name;
+      const prevStatus = status.textContent;
+      status.textContent = msg + '；本机开始解析预览…';
+      if (window.refreshCloudAssets) window.refreshCloudAssets();
+    } catch (error) {
+      status.textContent = '本机仍可预览，但云端上传失败：' + (error.message || '未知错误');
+    }
+  }
   const reader = new FileReader();
   reader.onerror = () => { status.textContent = '读取文件失败，请重新选择 GLB 文件。'; };
   reader.onload = () => {
