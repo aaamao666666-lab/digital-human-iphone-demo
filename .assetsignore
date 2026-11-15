@@ -9,3 +9,7 @@ wrangler.jsonc
 BACKEND_SETUP.md
 _routes.json
 _headers
+package.json
+package-lock.json
+WORKER_DEPLOYMENT.md
+README.md
