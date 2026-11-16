@@ -28,8 +28,8 @@ export default {
   if(path.startsWith("/api/")&&request.method==="OPTIONS"){
    return cors(request,new Response(null,{status:204}));
   }
-  if(path==="/admin"||path==="/admin/"){
-   return env.ASSETS.fetch(new Request(new URL("/admin.html",request.url),request));
+  if(path==="/admin"||path==="/admin/"||path==="/admin.html"){
+   return json({error:"管理后台已迁移至独立入口。"},404);
   }
   let response;
   if(path==="/api/health"){
