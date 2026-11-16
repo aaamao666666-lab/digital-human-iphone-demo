@@ -189,7 +189,9 @@ img,video,canvas,svg{max-width:100%}
  .look-image,.motion-media{height:300px}
 }
 
-\n.app-admin-link{align-self:center;flex-shrink:0;padding:8px 10px;border:1px solid #dce2d7;border-radius:20px;color:#667a61;font-size:11px;white-space:nowrap;background:#fffefa}\n</style><script type="importmap">
+\n.app-admin-link{align-self:center;flex-shrink:0;padding:8px 10px;border:1px solid #dce2d7;border-radius:20px;color:#667a61;font-size:11px;white-space:nowrap;background:#fffefa}\n
+.model-inspection{margin-top:15px;padding:14px;border:1px solid #e4e7de;border-radius:14px;background:#f8f8f2}.model-inspection[hidden]{display:none!important}.inspection-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.inspection-head strong{display:block;color:#455340;font-size:13px}.inspection-head span{display:block;color:#96998d;font-size:10px;margin-top:4px}.inspection-head button{flex-shrink:0;padding:8px 10px;font-size:10px}.inspection-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin:13px 0}.inspection-stat{min-width:0;padding:10px 5px;border:1px solid #e7e9e1;border-radius:10px;background:#fffefa;text-align:center}.inspection-stat b{display:block;color:#61765f;font-size:18px;font-weight:600;font-variant-numeric:tabular-nums}.inspection-stat span{display:block;margin-top:4px;color:#92958b;font-size:9px;white-space:nowrap}.inspection-block{padding:12px 0;border-top:1px solid #e7e8e0}.inspection-title{font-size:11px;color:#586a53;font-weight:600}.inspection-block p{font-size:10px;color:#92958b;line-height:1.7;margin:6px 0 10px}.expression-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px}.expression-row{min-width:0;padding:7px 8px;border:1px solid #e7e9e1;border-radius:9px;background:#fffefa}.expression-row label{display:flex;justify-content:space-between;gap:8px;color:#626e5d;font-size:10px;overflow-wrap:anywhere}.expression-row output{color:#92958b;font-variant-numeric:tabular-nums}.expression-row input{display:block;width:100%;height:20px;margin:5px 0 0;accent-color:#788b75}.bone-names{display:flex;flex-wrap:wrap;gap:5px}.bone-chip{max-width:100%;padding:5px 7px;border-radius:7px;background:#fffefa;border:1px solid #e7e9e1;color:#76816f;font-size:9px;overflow-wrap:anywhere}.inspection-foot{font-size:10px;line-height:1.7;color:#92958b;padding-top:10px;border-top:1px solid #e7e8e0}.viewer-tools select{max-width:100%;min-width:130px;border:1px solid #c9cfc3;border-radius:22px;background:#fffefa;padding:9px 12px;color:#64765f;font-size:12px}@media(max-width:420px){.inspection-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.expression-controls{grid-template-columns:1fr}.viewer{height:330px}.viewer-tools{gap:7px}.viewer-tools button,.viewer-tools select{font-size:10px;padding:8px 10px}}
+</style><script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.187.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.187.0/examples/jsm/"}}
 </script>
 </head>
@@ -325,7 +327,7 @@ img,video,canvas,svg{max-width:100%}
 <section class="workspace" id="studio"><div class="kicker">XINLING CREATIVE STUDIO</div><h2>数字人工作台</h2><p class="hint">内部测试素材统一上传到私有云端素材库。需要完成 Cloudflare 部署并绑定 R2 后才能真正启用。</p>
 <div class="panel"><h3>内部测试访问</h3><p class="hint">输入管理员配置的测试口令。口令只保存在当前浏览器标签页会话中。</p><div class="access-row"><input id="appTestKey" type="password" autocomplete="off" placeholder="内部测试口令"><button class="secondary" id="saveTestKey" type="button">保存并连接</button></div><div id="apiStatus" class="chat-status">正在检查云端后端…</div></div>
 <div class="panel"><h3>上传照片或视频到云端</h3><p class="hint">支持 JPG、PNG、WEBP、GIF、MP4、MOV、WEBM；单个文件最大 50 MB。</p><div class="upload-zone"><div>选择照片或视频</div><input id="mediaInput" type="file" accept="image/*,video/*"></div><div id="mediaPreview" class="hint" aria-live="polite">选择文件后自动上传到私有云端。</div></div>
-<div class="panel"><h3>导入并保存 3D 模型</h3><p class="hint">支持 GLB 模型。选取后会先在本机预览，同时上传至私有云端素材库。</p><input id="modelInput" type="file" accept=".glb,model/gltf-binary,model/gltf+json"><div id="modelStatus" class="status">尚未选择模型</div><div class="viewer" id="modelViewer"><div id="viewerPlaceholder">选择一个 GLB 模型<br>在这里旋转、缩放和查看模型动画</div><canvas id="modelCanvas"></canvas></div><div class="viewer-tools"><button id="animationToggle" type="button" disabled>暂停动画</button><button id="resetCamera" type="button" disabled>重置视角</button></div><div class="viewer-note">云端保存与本机预览是两件事：模型会私有保存，但不会公开生成下载链接。</div></div>
+<div class="panel"><h3>导入并保存 3D 模型</h3><p class="hint">支持 GLB 模型。选取后会先在本机预览，同时上传至私有云端素材库。</p><input id="modelInput" type="file" accept=".glb,model/gltf-binary,model/gltf+json"><div id="modelStatus" class="status">尚未选择模型</div><div class="viewer" id="modelViewer"><div id="viewerPlaceholder">选择一个 GLB 模型<br>在这里旋转、缩放和查看模型动画</div><canvas id="modelCanvas"></canvas></div><div class="viewer-tools"><button id="animationToggle" type="button" disabled>暂停动画</button><button id="resetCamera" type="button" disabled>重置视角</button><select id="animationSelect" aria-label="选择模型动画" disabled><option value="">无内置动画</option></select></div><div class="model-inspection" id="modelInspection" hidden><div class="inspection-head"><div><strong>模型能力检测</strong><span id="inspectionSummary">等待模型</span></div><button class="secondary" id="resetExpressions" type="button">重置形变</button></div><div class="inspection-grid"><div class="inspection-stat"><b id="statMeshes">—</b><span>网格</span></div><div class="inspection-stat"><b id="statSkinned">—</b><span>蒙皮网格</span></div><div class="inspection-stat"><b id="statBones">—</b><span>骨骼</span></div><div class="inspection-stat"><b id="statMorphs">—</b><span>形变目标</span></div><div class="inspection-stat"><b id="statAnimations">—</b><span>动画</span></div></div><div class="inspection-block"><div class="inspection-title">表情 / 形变测试</div><p>如果模型带有形变目标，可以拖动滑块查看效果；没有形变目标时不会凭空生成表情。</p><div id="expressionControls" class="expression-controls">尚未检测</div></div><div class="inspection-block"><div class="inspection-title">骨骼节点</div><div id="boneNames" class="bone-names">尚未检测</div></div><div class="inspection-foot" id="inspectionNote">检测只读取模型已有结构，不会自动补骨骼、表情或动作。</div></div><div class="viewer-note">先在本机校验 GLB 结构，再上传到私有云端；模型文件不会公开生成下载链接。</div></div>
 <div class="panel"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><h3 style="margin:0">我的云端素材</h3><button class="secondary" id="refreshAssets" type="button">刷新</button></div><div id="cloudAssetsList" class="hint" style="margin-top:14px">连接云端后显示已上传素材。</div><div id="assetPreview" style="margin-top:14px"></div></div>
 <div class="panel"><h3>鑫灵 AI 对话</h3><p class="hint">DeepSeek API Key 由服务器 Secret 保管，网页不直接接触密钥。</p><div class="chat-log" id="chatLog" aria-live="polite"><div class="chat-bubble assistant">你好，我是鑫灵 AI 助手。完成后端配置后就可以开始对话。</div></div><div class="chat-row"><input id="chatMessage" type="text" maxlength="2000" placeholder="输入你想说的话…" autocomplete="off"><button id="sendChat" type="button">发送</button></div><div class="status" id="chatFeedback">内部测试模式。</div></div>
 <div class="panel"><h3>数字人动作与生成</h3><p class="hint">照片自动生成 3D、骨骼动作绑定、面部表情、语音和口型同步仍需专用生成服务，尚未接入。你上传的原始素材会先安全保存在私有云端。</p><span class="status">开发状态：待接入</span></div></section>
@@ -491,10 +493,54 @@ const canvas = document.getElementById('modelCanvas');
 const placeholder = document.getElementById('viewerPlaceholder');
 const status = document.getElementById('modelStatus');
 const animationToggle = document.getElementById('animationToggle');
+const animationSelect = document.getElementById('animationSelect');
 const resetCamera = document.getElementById('resetCamera');
-let renderer, scene, camera, controls, mixer, activeModel, clock, animationFrame;
+const inspection = document.getElementById('modelInspection');
+const expressionControls = document.getElementById('expressionControls');
+const boneNames = document.getElementById('boneNames');
+const resetExpressions = document.getElementById('resetExpressions');
+const statMeshes = document.getElementById('statMeshes');
+const statSkinned = document.getElementById('statSkinned');
+const statBones = document.getElementById('statBones');
+const statMorphs = document.getElementById('statMorphs');
+const statAnimations = document.getElementById('statAnimations');
+const inspectionSummary = document.getElementById('inspectionSummary');
+const inspectionNote = document.getElementById('inspectionNote');
+
+let renderer, scene, camera, controls, mixer, activeAction, activeModel, clock, animationFrame;
 let animationPaused = false;
 let fitDistance = 3;
+let expressionTargets = [];
+let expressionInputs = [];
+
+function validateSelfContainedGlb(buffer) {
+  if (!(buffer instanceof ArrayBuffer) || buffer.byteLength < 20) {
+    throw new Error('文件太小，不是有效的 GLB 模型。');
+  }
+  const view = new DataView(buffer);
+  if (view.getUint32(0, true) !== 0x46546C67) throw new Error('文件头无效：请选择标准 GLB 文件。');
+  if (view.getUint32(4, true) !== 2) throw new Error('目前只支持 GLB 2.0。');
+  if (view.getUint32(8, true) !== buffer.byteLength) throw new Error('GLB 文件长度校验失败。');
+  const jsonLength = view.getUint32(12, true);
+  const jsonType = view.getUint32(16, true);
+  if (jsonType !== 0x4E4F534A || jsonLength < 2 || 20 + jsonLength > buffer.byteLength) {
+    throw new Error('GLB 缺少有效的 JSON 结构区块。');
+  }
+  let document;
+  try {
+    const source = new TextDecoder().decode(new Uint8Array(buffer, 20, jsonLength)).replace(/\0+$/g, '');
+    document = JSON.parse(source);
+  } catch {
+    throw new Error('无法读取 GLB 模型结构。');
+  }
+  if (document.asset?.version !== '2.0') throw new Error('模型内部版本不是 glTF 2.0。');
+  const externalResources = [...(document.buffers || []), ...(document.images || [])]
+    .filter(item => item && item.uri && !/^data:/i.test(item.uri));
+  if (externalResources.length) {
+    throw new Error('模型引用了外部图片或文件。为保护隐私，本测试台只加载资源已嵌入文件的自包含 GLB。');
+  }
+  return document;
+}
 
 function setupViewer() {
   if (renderer) return true;
@@ -530,6 +576,10 @@ function setupViewer() {
     else window.addEventListener('resize', resize);
     resize();
     const render = () => {
+      if (document.hidden) {
+        animationFrame = 0;
+        return;
+      }
       animationFrame = requestAnimationFrame(render);
       const delta = Math.min(clock.getDelta(), 0.05);
       if (mixer && !animationPaused) mixer.update(delta);
@@ -561,23 +611,214 @@ function frameModel(root) {
   controls.update();
 }
 
+function clearInspection() {
+  inspection.hidden = true;
+  expressionControls.replaceChildren();
+  boneNames.replaceChildren();
+  expressionTargets = [];
+  expressionInputs = [];
+  [statMeshes, statSkinned, statBones, statMorphs, statAnimations].forEach(node => node.textContent = '—');
+  inspectionSummary.textContent = '等待模型';
+  inspectionNote.textContent = '检测只读取模型已有结构，不会自动补骨骼、表情或动作。';
+}
+
 function clearPreviousModel() {
   if (mixer) mixer.stopAllAction();
   mixer = null;
+  activeAction = null;
   if (activeModel) {
     scene.remove(activeModel);
     activeModel.traverse(node => {
       if (node.geometry) node.geometry.dispose();
       if (node.material) {
         const materials = Array.isArray(node.material) ? node.material : [node.material];
-        materials.forEach(material => material.dispose());
+        materials.forEach(material => {
+          Object.keys(material).forEach(key => {
+            const value = material[key];
+            if (value && value.isTexture) value.dispose();
+          });
+          material.dispose();
+        });
       }
     });
   }
   activeModel = null;
+  animationSelect.replaceChildren(new Option('无内置动画', ''));
+  animationSelect.disabled = true;
+  animationToggle.disabled = true;
+  animationToggle.textContent = '无内置动画';
+  resetCamera.disabled = true;
+  clearInspection();
 }
 
-modelInput.addEventListener('change', async event => {
+function addExpressionControl(name, targets) {
+  const row = document.createElement('div');
+  row.className = 'expression-row';
+  const label = document.createElement('label');
+  const title = document.createElement('span');
+  title.textContent = name;
+  const output = document.createElement('output');
+  output.value = '0.00';
+  output.textContent = '0.00';
+  label.append(title, output);
+  const input = document.createElement('input');
+  input.type = 'range';
+  input.min = '0';
+  input.max = '1';
+  input.step = '0.01';
+  input.value = '0';
+  input.setAttribute('aria-label', name + ' 形变强度');
+  input.addEventListener('input', () => {
+    const value = Number(input.value);
+    targets.forEach(target => {
+      if (target.mesh.morphTargetInfluences) target.mesh.morphTargetInfluences[target.index] = value;
+    });
+    output.value = value.toFixed(2);
+    output.textContent = value.toFixed(2);
+  });
+  row.append(label, input);
+  expressionControls.append(row);
+  expressionInputs.push({input, output, targets});
+}
+
+function inspectModel(root, animations) {
+  const meshes = new Set();
+  const skinnedMeshes = new Set();
+  const bones = new Set();
+  const groups = new Map();
+
+  root.traverse(node => {
+    if (node.isBone) bones.add(node);
+    if (!node.isMesh) return;
+    meshes.add(node);
+    if (node.isSkinnedMesh && node.skeleton) {
+      skinnedMeshes.add(node);
+      node.skeleton.bones.forEach(bone => bones.add(bone));
+    }
+    const dictionary = node.morphTargetDictionary || {};
+    const entries = Object.entries(dictionary);
+    if (entries.length) {
+      entries.forEach(([name, index]) => {
+        if (!groups.has(name)) groups.set(name, []);
+        groups.get(name).push({mesh:node, index:Number(index)});
+      });
+    } else if (node.morphTargetInfluences?.length) {
+      node.morphTargetInfluences.forEach((_value, index) => {
+        const name = '形变 ' + (index + 1);
+        if (!groups.has(name)) groups.set(name, []);
+        groups.get(name).push({mesh:node, index});
+      });
+    }
+  });
+
+  const clips = Array.isArray(animations) ? animations : [];
+  statMeshes.textContent = String(meshes.size);
+  statSkinned.textContent = String(skinnedMeshes.size);
+  statBones.textContent = String(bones.size);
+  statMorphs.textContent = String(groups.size);
+  statAnimations.textContent = String(clips.length);
+  inspectionSummary.textContent = '结构读取完成';
+  inspection.hidden = false;
+
+  expressionControls.replaceChildren();
+  expressionTargets = Array.from(groups.entries());
+  expressionInputs = [];
+  if (!expressionTargets.length) {
+    expressionControls.textContent = '该模型没有可调节的形变目标。';
+  } else {
+    const maxControls = 48;
+    expressionTargets.slice(0, maxControls).forEach(([name, targets]) => addExpressionControl(name, targets));
+    if (expressionTargets.length > maxControls) {
+      const more = document.createElement('div');
+      more.className = 'inspection-foot';
+      more.textContent = '共检测到 ' + expressionTargets.length + ' 项；为保持手机流畅，当前显示前 ' + maxControls + ' 项。';
+      expressionControls.append(more);
+    }
+  }
+
+  boneNames.replaceChildren();
+  const names = Array.from(bones).map((bone, index) => bone.name || ('Bone ' + (index + 1)));
+  if (!names.length) {
+    boneNames.textContent = '未检测到骨骼节点。';
+  } else {
+    names.slice(0, 32).forEach(name => {
+      const chip = document.createElement('span');
+      chip.className = 'bone-chip';
+      chip.textContent = name;
+      boneNames.append(chip);
+    });
+    if (names.length > 32) {
+      const more = document.createElement('span');
+      more.className = 'bone-chip';
+      more.textContent = '另有 ' + (names.length - 32) + ' 根';
+      boneNames.append(more);
+    }
+  }
+
+  if (!skinnedMeshes.size) {
+    inspectionNote.textContent = '已读取模型，但未检测到蒙皮网格；它可能只是静态模型，不能直接驱动标准骨骼动作。';
+  } else if (!groups.size) {
+    inspectionNote.textContent = '已检测到骨骼蒙皮，但没有形变目标；可以测试身体骨骼动画，面部表情需要另行制作或生成。';
+  } else {
+    inspectionNote.textContent = '已检测到骨骼蒙皮与形变目标。滑块可用于本机验证形变；目标名称不一定都代表面部表情。';
+  }
+
+  animationSelect.replaceChildren();
+  if (clips.length) {
+    clips.forEach((clip, index) => {
+      const option = document.createElement('option');
+      option.value = String(index);
+      option.textContent = (index + 1) + '. ' + (clip.name || ('动画 ' + (index + 1)));
+      animationSelect.append(option);
+    });
+    animationSelect.disabled = false;
+    mixer = new THREE.AnimationMixer(root);
+    playAnimation(0, clips);
+  } else {
+    animationSelect.append(new Option('无内置动画', ''));
+    animationSelect.disabled = true;
+    animationToggle.disabled = true;
+    animationToggle.textContent = '无内置动画';
+    mixer = null;
+    activeAction = null;
+  }
+  return {meshCount:meshes.size, skinnedMeshCount:skinnedMeshes.size, boneCount:bones.size, morphTargetCount:groups.size, animationCount:clips.length};
+}
+
+function playAnimation(index, clips) {
+  if (!mixer || !clips[index]) return;
+  if (activeAction) activeAction.stop();
+  activeAction = mixer.clipAction(clips[index]);
+  activeAction.reset().play();
+  animationPaused = false;
+  animationToggle.disabled = false;
+  animationToggle.textContent = '暂停动画';
+}
+
+let activeClips = [];
+animationSelect.addEventListener('change', () => {
+  playAnimation(Number(animationSelect.value), activeClips);
+});
+animationToggle.addEventListener('click', () => {
+  if (!mixer || !activeAction) return;
+  animationPaused = !animationPaused;
+  animationToggle.textContent = animationPaused ? '继续动画' : '暂停动画';
+});
+resetCamera.addEventListener('click', () => {
+  if (activeModel) frameModel(activeModel);
+});
+resetExpressions.addEventListener('click', () => {
+  expressionInputs.forEach(({input, output, targets}) => {
+    input.value = '0';
+    output.value = '0.00';
+    output.textContent = '0.00';
+    targets.forEach(target => {
+      if (target.mesh.morphTargetInfluences) target.mesh.morphTargetInfluences[target.index] = 0;
+    });
+  });
+});
+
+modelInput.addEventListener('change', event => {
   const file = event.target.files && event.target.files[0];
   if (!file) return;
   if (!file.name.toLowerCase().endsWith('.glb')) {
@@ -588,56 +829,60 @@ modelInput.addEventListener('change', async event => {
     status.textContent = '这个模型超过 50 MB。为了手机运行稳定，请先使用较小的 GLB 文件。';
     return;
   }
-  if (!setupViewer()) return;
-  status.textContent = '正在读取模型：' + file.name;
-  let cloudSaveMessage = ' · 云端尚未配置';
-  if (window.xinlingUploadAsset) {
-    try {
-      await window.xinlingUploadAsset(file);
-      cloudSaveMessage = ' · 已保存到私有云端';
-      if (window.refreshCloudAssets) window.refreshCloudAssets();
-    } catch (error) {
-      cloudSaveMessage = ' · 云端上传失败：' + (error.message || '未知错误');
-    }
-  }
+  status.textContent = '正在本机校验模型结构…';
   const reader = new FileReader();
-  reader.onerror = () => { status.textContent = '读取文件失败，请重新选择 GLB 文件。' + cloudSaveMessage; };
+  reader.onerror = () => { status.textContent = '读取文件失败，请重新选择 GLB 文件。'; };
   reader.onload = () => {
+    try {
+      validateSelfContainedGlb(reader.result);
+    } catch (error) {
+      status.textContent = error.message || 'GLB 结构校验失败。';
+      return;
+    }
+    if (!setupViewer()) return;
+    status.textContent = '本机校验通过，正在加载 3D 模型…';
     const loader = new GLTFLoader();
-    loader.parse(reader.result, '', gltf => {
+    loader.parse(reader.result, '', async gltf => {
       clearPreviousModel();
       activeModel = gltf.scene;
+      activeClips = gltf.animations || [];
       scene.add(activeModel);
       frameModel(activeModel);
-      if (gltf.animations && gltf.animations.length) {
-        mixer = new THREE.AnimationMixer(activeModel);
-        mixer.clipAction(gltf.animations[0]).play();
-        animationPaused = false;
-        animationToggle.disabled = false;
-        animationToggle.textContent = '暂停动画';
-        status.textContent = '模型已显示：' + file.name + ' · 含 ' + gltf.animations.length + ' 段动画，正在播放第一段。' + cloudSaveMessage;
-      } else {
-        animationToggle.disabled = true;
-        animationToggle.textContent = '无内置动画';
-        status.textContent = '模型已显示：' + file.name + ' · 可以用手指旋转和缩放。模型本身没有内置动画。' + cloudSaveMessage;
+      const report = inspectModel(activeModel, activeClips);
+      let cloudSaveMessage = ' · 仅本机预览，云端接口未连接';
+      if (window.xinlingUploadAsset) {
+        try {
+          await window.xinlingUploadAsset(file);
+          cloudSaveMessage = ' · 已保存到私有云端';
+          if (window.refreshCloudAssets) window.refreshCloudAssets();
+        } catch (error) {
+          cloudSaveMessage = ' · 本机预览成功，云端未保存：' + (error.message || '请检查测试口令');
+        }
       }
-      resetCamera.disabled = false;
+      status.textContent = '模型已显示：' + file.name + ' · 骨骼 ' + report.boneCount + ' · 形变 ' + report.morphTargetCount + ' · 动画 ' + report.animationCount + cloudSaveMessage;
     }, error => {
-      status.textContent = '模型解析失败。请确认文件是有效的 GLB 2.0 模型。';
+      status.textContent = '模型解析失败。请确认 GLB 文件完整且符合 glTF 2.0。';
       console.error(error);
     });
   };
   reader.readAsArrayBuffer(file);
 });
 
-animationToggle.addEventListener('click', () => {
-  if (!mixer) return;
-  animationPaused = !animationPaused;
-  animationToggle.textContent = animationPaused ? '继续动画' : '暂停动画';
-});
-resetCamera.addEventListener('click', () => {
-  if (!activeModel) return;
-  frameModel(activeModel);
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && renderer && !animationFrame) {
+    animationFrame = requestAnimationFrame(() => {
+      animationFrame = 0;
+      const render = () => {
+        if (document.hidden) { animationFrame = 0; return; }
+        animationFrame = requestAnimationFrame(render);
+        const delta = Math.min(clock.getDelta(), 0.05);
+        if (mixer && !animationPaused) mixer.update(delta);
+        controls.update();
+        renderer.render(scene, camera);
+      };
+      render();
+    });
+  }
 });
 window.addEventListener('pagehide', () => {
   if (animationFrame) cancelAnimationFrame(animationFrame);
