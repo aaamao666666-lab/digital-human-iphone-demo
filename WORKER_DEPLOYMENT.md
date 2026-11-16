@@ -1,48 +1,70 @@
 # 鑫灵 AI：Cloudflare Workers 部署设置
 
-本仓库当前使用 **Cloudflare Workers Builds + Static Assets** 部署，不使用 Pages Functions 直接托管。`worker.js` 将现有 API 模块接入 Worker 路由，`wrangler.jsonc` 负责静态文件与 API 路由。
+本仓库当前使用 **Cloudflare Workers Builds + Static Assets**，不是 GitHub Pages，也不是旧版 Pages Functions。worker.js 负责 API 路由，wrangler.jsonc 负责静态资源。
 
-## Git 连接页面参数
+## Git 连接参数
 
-- 项目名称：`digital-human-iphone-demo`（必须与 wrangler.jsonc 中的 name 一致）
-- GitHub 仓库：`aaamao666666-lab/digital-human-iphone-demo`
-- 生产分支：`1主要的`
-- 根目录：仓库根目录（`/`）
-- 构建命令：留空（项目没有独立前端构建步骤）
-- 部署命令：`npx wrangler deploy`
-- 预览命令：`npx wrangler preview`
+- 项目名称：digital-human-iphone-demo
+- GitHub 仓库：aaamao666666-lab/digital-human-iphone-demo
+- 生产分支：1主要的
+- 根目录：仓库根目录（/）
+- 构建命令：留空
+- 部署命令：npx wrangler deploy
+- 预览命令：npx wrangler preview
 
-不要把项目设成静态 Pages 构建，也不要用 `exit 0` 替换部署命令。Workers Builds 的部署命令需要运行 Wrangler。Wrangler 版本由 `package.json` 管理。
+不要改成静态 Pages 构建，也不要用 exit 0 替代部署命令。Wrangler 版本由 package.json 管理。生产分支有新提交时，已连接的 Workers Builds 会按项目设置触发部署。
 
-## 部署完成后需要配置的云端资源
+## 私有云端存储（二选一）
 
-### 1. 私有 R2 存储桶
-创建 Standard 存储桶，例如 `xinling-private-media`。保持 Private，不启用 Public Bucket 或 `r2.dev`。
+后端同时支持 **Supabase Storage** 和 **Cloudflare R2**。代码优先使用 Supabase；没有完整 Supabase 配置时才回退到 R2。
 
-在 Worker 的设置中添加 R2 Bucket 绑定：
-- 变量名称：`XINLING_MEDIA`
-- 存储桶：`xinling-private-media`（以实际创建的桶名为准）
+### 方案 A：Supabase Storage（当前代码优先）
 
-### 2. 运行时 Secrets
-在 Worker 的 Variables & Secrets / 变量和机密中添加 Production Secrets：
-- `APP_TEST_KEY`：内部测试随机口令，由项目管理员生成并保管。
-- `DEEPSEEK_API_KEY`：用户自己的 DeepSeek API Key，只粘贴到 Cloudflare Secret，不要放到 GitHub 或网页端。
+1. 在 Supabase 创建 Storage bucket，建议命名 xinling-media。
+2. bucket 必须保持 **Private**，不要开启公开访问。
+3. 在 Cloudflare Worker 的 **Settings → Variables and Secrets** 配置：
+   - SUPABASE_URL：Supabase 项目 URL（普通变量即可）。
+   - SUPABASE_SECRET_KEY：Supabase Secret Key（Secret）。
+   - 如果项目使用旧版服务密钥名称，也可使用 SUPABASE_SERVICE_ROLE_KEY（Secret）。
+   - 如果 bucket 不是 xinling-media，再设置 SUPABASE_STORAGE_BUCKET 为实际名称。
+4. 保存后重新部署 Worker。
 
-不要在聊天中发送或提交任何密钥。
+### 方案 B：Cloudflare R2
 
-### 3. 验证
+1. 创建 Standard bucket，保持 **Private**，不要开启 Public Bucket 或 r2.dev。
+2. 在 Worker 的 **Settings → Bindings** 添加 R2 Bucket：
+   - 变量名称：XINLING_MEDIA
+   - 绑定到刚创建的私有 bucket。
+3. 保存后重新部署 Worker。
+
+## 运行时 Secrets
+
+在 Worker 的 **Settings → Variables and Secrets** 中添加 Production Secrets：
+
+- APP_TEST_KEY：内部测试随机口令，由项目管理员自行生成并保管。
+- DEEPSEEK_API_KEY：DeepSeek API Key，只保存在服务端 Secret。
+
+不要把任何密钥写入网页、GitHub 仓库或聊天消息。
+
+## 验证
+
 部署后打开：
-- `https://<你的-worker>.workers.dev/`：网站首页
-- `https://<你的-worker>.workers.dev/api/health`：后端状态检查
+
+- https://<你的-worker>.workers.dev/：网站首页
+- https://<你的-worker>.workers.dev/api/health：后端状态
 
 健康检查字段：
-- `deepseekConfigured`：DeepSeek Secret 是否存在
-- `accessGateConfigured`：内部测试口令是否存在
-- `cloudStorageConfigured`：R2 绑定是否存在
 
-未配置密钥或 R2 时，对应功能会明确返回未配置，不代表已可用。
+- deepseekConfigured：DeepSeek Secret 是否存在。
+- accessGateConfigured：内部测试口令是否存在。
+- cloudStorageConfigured：Supabase 或 R2 是否已连接。
+- storageProvider：当前使用 supabase、r2 或 未连接。
 
-## 安全和费用
-- `functions/` 中的服务端代码不会作为公开静态文件上传。
-- R2 必须保持私有；当前测试口令是共享测试门禁，不是正式用户账户系统。
-- 不启用付费升级、不添加付款方式。免费额度和账户要求以 Cloudflare 控制台当时显示为准。
+只有 cloudStorageConfigured: true 才代表云端素材库已连接。Worker 首页能打开，不代表照片、视频或模型上传已经可用。
+
+## 安全与费用
+
+- 上传对象保存在私有 bucket；不要启用公开桶。
+- 当前 APP_TEST_KEY 是共享测试门禁，不是正式用户账户系统。正式开放前还需要用户登录、每人独立授权和删除策略。
+- 只处理本人或已取得明确授权的照片、视频和模型。
+- 不启用付费升级、不添加付款方式；免费额度和账户要求以服务商控制台当时显示为准。
