@@ -93,7 +93,7 @@ input[type=file]{display:block;max-width:100%;margin:auto;font-size:11px}
     </div></div>
     <div class="grid" id="assetGrid"><div class="empty" style="grid-column:1/-1">连接后台后，这里会显示已上传的素材。</div></div>
   </section>
-  <p class="footnote">后台安全说明：当前使用内部访问口令，不是完整的多用户账号系统。请勿把访问口令分享给他人。R2 未绑定或 Worker 尚未部署最新代码时，上传功能会明确提示未连接，不会假装上传成功。</p>
+  <p class="footnote">后台安全说明：当前使用内部访问口令，不是完整的多用户账号系统。请勿把访问口令分享给他人。云存储可使用私有 Supabase Storage 或 Cloudflare R2；未完成配置时，上传功能会明确提示未连接，不会假装上传成功。</p>
 </main>
 <div class="modal" id="previewModal" role="dialog" aria-modal="true" aria-label="素材预览"><div class="modalbox"><div class="modalhead"><strong id="previewTitle">素材预览</strong><button class="btn secondary" id="closePreview">关闭</button></div><div class="modalbody" id="previewBody"></div></div></div>
 <script>
@@ -111,8 +111,9 @@ async function checkHealth(){
   const r=await fetch(API+'/api/health',{cache:'no-store'}),d=await r.json();
   const ok=r.ok&&d.ok; $('healthDot').className='dot '+(ok?'ok':'no');
   $('healthLabel').textContent=ok?(d.cloudStorageConfigured?'云存储已连接':'后端在线，云存储未连接'):'后端未连接';
-  if(!d.cloudStorageConfigured)setStatus('connectionStatus','后端已响应，但还没有检测到 XINLING_MEDIA R2 绑定。请先在 Cloudflare Worker Production 环境绑定存储桶。','bad');
+  if(!d.cloudStorageConfigured)setStatus('connectionStatus','后端已响应，但云存储尚未连接。可配置 Supabase Storage（推荐免绑卡免费档）或 Cloudflare R2。','bad');
   else if(!d.accessGateConfigured)setStatus('connectionStatus','缺少后台访问口令配置 APP_TEST_KEY。','bad');
+  else setStatus('connectionStatus','后端和云存储已连接：'+(d.storageProvider||'已配置')+'。','good');
   return d;
  }catch(e){$('healthDot').className='dot no';$('healthLabel').textContent='连接失败';setStatus('connectionStatus','无法连接 Cloudflare 后端：'+e.message,'bad');return null;}
 }
