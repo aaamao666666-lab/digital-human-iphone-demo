@@ -1,0 +1,1 @@
+Standalone admin worker asset routing fix: only `/` is run through the worker; `/index.html` is served directly by the static asset binding to avoid recursive ASSETS.fetch routing. Deploy with `npx wrangler deploy --config wrangler.admin.jsonc`.
