@@ -7,10 +7,18 @@
   "assets": {
     "directory": ".",
     "binding": "ASSETS",
-    "run_worker_first": ["/api/*"],
+    "run_worker_first": [
+      "/api/*"
+    ],
     "not_found_handling": "404-page"
   },
   "observability": {
     "enabled": true
-  }
+  },
+  "r2_buckets": [
+    {
+      "binding": "XINLING_MEDIA",
+      "bucket_name": "xinling-media"
+    }
+  ]
 }
