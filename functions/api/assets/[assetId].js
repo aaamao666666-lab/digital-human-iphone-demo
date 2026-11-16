@@ -11,7 +11,7 @@ function authorized(request,env){
 function objectId(id){
   const match=String(id||"").match(/^([0-9a-f-]{36})(?:--([A-Za-z0-9._~!$&'()*+,;=:@%+-]{0,480}))?$/i);
   if(!match)return null;
-  if(match[2]){try{const decoded=decodeURIComponent(match[2]);if(/[\\/\\\\\\0-\\x1f\\x7f]/.test(decoded))return null;}catch{return null;}}
+  if(match[2]){try{const decoded=decodeURIComponent(match[2]);if(/[\/\\\u0000-\u001f\u007f]/.test(decoded))return null;}catch{return null;}}
   return String(id);
 }
 export async function onRequestGet({request,env,params}){
