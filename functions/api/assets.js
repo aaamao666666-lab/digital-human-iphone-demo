@@ -13,7 +13,7 @@ function authorized(request, env) {
   return diff === 0;
 }
 function safeName(value) {
-  return String(value || "upload").replace(/[\\/\\\\\\0-\\x1f\\x7f]/g, "_").slice(0,160) || "upload";
+  return String(value || "upload").replace(/[\/\\\u0000-\u001f\u007f]/g, "_").slice(0,160) || "upload";
 }
 
 export async function onRequestGet({ request, env }) {
