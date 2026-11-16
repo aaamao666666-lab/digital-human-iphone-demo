@@ -2,8 +2,8 @@ const PREFIX = "testing/";
 const BUCKET_DEFAULT = "xinling-media";
 
 export function storageProvider(env) {
-  if (env.XINLING_MEDIA) return "r2";
   if (env.SUPABASE_URL && (env.SUPABASE_SECRET_KEY || env.SUPABASE_SERVICE_ROLE_KEY)) return "supabase";
+  if (env.XINLING_MEDIA) return "r2";
   return null;
 }
 
