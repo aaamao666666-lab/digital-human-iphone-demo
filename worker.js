@@ -37,7 +37,7 @@ export default {
    response=request.method==="GET"?await healthGet({request,env,params:{},waitUntil:p=>ctx.waitUntil(p)}):methodNotAllowed(["GET"]);
    return cors(request,response);
   }
-  const avatarMatch=path.match(/^\\/api\\/avatar\\/(generate|model)(?:\\/([^/]+))?$/);
+  const avatarMatch=path.match(/^\/api\/avatar\/(generate|model)(?:\/([^/]+))?$/);
   if(avatarMatch){
    const action=avatarMatch[1],taskId=avatarMatch[2]||"";
    if(action==="generate"&&!taskId){
