@@ -62,6 +62,16 @@
 
 只有 cloudStorageConfigured: true 才代表云端素材库已连接。Worker 首页能打开，不代表照片、视频或模型上传已经可用。
 
+### 云端素材库端到端测试
+
+仓库提供 `scripts/storage-smoke-test.mjs`，会依次验证健康检查、未授权请求拦截、临时 PNG 上传、下载校验、列表读取和删除清理。请在自己的电脑终端执行（不要把测试口令写进文件或发到聊天里）：
+
+```bash
+APP_BASE_URL="https://你的-worker.workers.dev" APP_TEST_KEY="你的内部测试口令" npm run test:storage
+```
+
+测试成功会显示全部步骤通过；若失败，会显示具体失败步骤。测试结束会自动删除临时文件；若网络中断导致清理失败，请到素材库手动删除名称为 `xinling-storage-smoke-test.png` 的测试文件。
+
 ## 安全与费用
 
 - 上传对象保存在私有 bucket；不要启用公开桶。
