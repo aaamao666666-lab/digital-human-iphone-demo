@@ -439,7 +439,7 @@ async function checkApiHealth() {
     const response = await fetch('./api/health', {cache:'no-store'});
     if (!response.ok) throw new Error('HTTP ' + response.status);
     const data = await response.json();
-    apiStatus.textContent = '后端在线' + (data.accessGateConfigured ? ' · 测试口令已配置' : ' · 测试口令待配置') + ' · 存储 ' + (data.cloudStorageConfigured ? ('已连接（' + data.storageProvider + '）') : '待连接') + ' · DeepSeek ' + (data.deepseekConfigured ? '已配置' : '待配置') + ' · Gemini ' + (data.geminiConfigured ? '已配置' : '待配置')
+    apiStatus.textContent = '后端在线' + (data.accessGateConfigured ? ' · 测试口令已配置' : ' · 测试口令待配置') + ' · 存储 ' + (data.cloudStorageConfigured ? ('已连接（' + data.storageProvider + '）') : '待连接') + ' · DeepSeek ' + (data.deepseekConfigured ? '已配置' : '待配置') + ' · Gemini ' + (data.geminiConfigured ? '已配置' : '待配置');
     if (data.cloudStorageConfigured && data.accessGateConfigured) refreshCloudAssets();
   } catch (error) {
     apiStatus.textContent = '当前网址还没有运行 Cloudflare 后端。需先完成 Cloudflare Pages 与私有 R2 绑定，GitHub Pages 不运行这些 API。';
