@@ -554,9 +554,15 @@ async function checkApiHealth() {
     const response = await fetch('./api/health', {cache:'no-store'});
     if (!response.ok) throw new Error('HTTP ' + response.status);
     const data = await response.json();
-    apiStatus.textContent = data.cloudStorageConfigured && data.accessGateConfigured
-      ? '云端后端在线 · 私有素材库已连接（' + (data.storageProvider || '存储服务') + '）' + (data.deepseekConfigured ? ' · DeepSeek 已配置' : ' · DeepSeek 待配置')
-      : '后端已响应，但仍缺少 ' + [!data.cloudStorageConfigured ? '私有云端存储配置（Supabase Storage 或 R2）' : '', !data.accessGateConfigured ? '内部测试口令' : ''].filter(Boolean).join('、');
+    const states = [
+      data.cloudStorageConfigured ? '私有素材库已连接（' + (data.storageProvider || '存储服务') + '）' : '私有素材库未连接',
+      data.accessGateConfigured ? '内部测试口令已配置' : '内部测试口令缺失',
+      data.deepseekConfigured ? 'DeepSeek 已配置' : 'DeepSeek 待配置',
+      data.meshyConfigured ? '3D 生成服务已配置' : '3D 生成服务待配置'
+    ];
+    apiStatus.textContent = (data.ok ? '云端后端在线 · ' : '后端状态异常 · ') + states.join(' · ');
+    const generationStatus = document.getElementById('avatarGenerationStatus');
+    if (generationStatus && !data.meshyConfigured) generationStatus.textContent = '3D 生成服务尚未配置 MESHY_API_KEY；不会创建任务或产生生成费用。';
     if (data.cloudStorageConfigured && data.accessGateConfigured) refreshCloudAssets();
   } catch (error) {
     apiStatus.textContent = '当前网址还没有运行 Cloudflare 后端。需先完成 Cloudflare Pages 与私有 R2 绑定，GitHub Pages 不运行这些 API。';
