@@ -8,6 +8,7 @@ export function onRequestGet({ env }) {
     ok: true,
     service: "xinling-api",
     deepseekConfigured: Boolean(env.DEEPSEEK_API_KEY),
+    meshyConfigured: Boolean(env.MESHY_API_KEY),
     accessGateConfigured: Boolean(env.APP_TEST_KEY),
     cloudStorageConfigured: Boolean(provider),
     storageProvider: provider || "未连接",
