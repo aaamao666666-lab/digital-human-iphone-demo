@@ -327,6 +327,14 @@ img,video,canvas,svg{max-width:100%}
 <section class="workspace" id="studio"><div class="kicker">XINLING CREATIVE STUDIO</div><h2>数字人工作台</h2><p class="hint">内部测试素材保存在私有云端。当前支持 Supabase Storage 或 Cloudflare R2 私有存储；连接完成后才能启用上传与云端素材管理。</p>
 <div class="panel"><h3>内部测试访问</h3><p class="hint">输入管理员配置的测试口令。口令只保存在当前浏览器标签页会话中。</p><div class="access-row"><input id="appTestKey" type="password" autocomplete="off" placeholder="内部测试口令"><button class="secondary" id="saveTestKey" type="button">保存并连接</button></div><div id="apiStatus" class="chat-status">正在检查云端后端…</div></div>
 <div class="panel"><h3>上传照片或视频到云端</h3><p class="hint">支持 JPG、PNG、WEBP、GIF、MP4、MOV、WEBM；单个文件最大 50 MB。</p><div class="upload-zone"><div>选择照片或视频</div><input id="mediaInput" type="file" accept="image/*,video/*"></div><div id="mediaPreview" class="hint" aria-live="polite">选择文件后自动上传到私有云端。</div></div>
+<div class="panel" id="avatarGenerationPanel">
+<h3>上传照片 / 视频，自动生成 3D 数字人</h3>
+<p class="hint">客户只需上传本人或已获授权的照片/视频。照片最多 4 张；视频会在手机本机自动截取关键帧，再提交生成基础 3D 人物模型。系统会在后台调用 3D 服务，客户不需要 GLB 文件。</p>
+<div class="upload-zone"><div>选择照片或视频（可多选，最多 4 个素材）</div><input id="avatarSourceInput" type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/webm" multiple></div>
+<label style="display:flex;gap:9px;align-items:flex-start;font-size:12px;line-height:1.7;color:#687565;margin:14px 0"><input id="avatarConsent" type="checkbox" style="margin-top:3px">我确认已取得本人或肖像权利人的明确授权，并知悉提交后素材会发送给第三方 3D 服务商；生成可能消耗服务商账户额度。</label>
+<button class="primary" id="generateAvatarButton" type="button" style="width:100%">开始生成我的 3D 数字人</button>
+<div id="avatarGenerationStatus" class="status" aria-live="polite">等待选择素材。当前仅在服务端配置生成服务密钥后才能开始。</div>
+</div>
 <div class="panel"><h3>导入并保存 3D 模型</h3><p class="hint">支持 50 MB 以内、自带纹理资源的 GLB 2.0。先在本机校验、预览并检测骨骼/形变/动画，通过后再上传到私有云端。</p><div class="viewer-tools"><button id="loadHumanoidDemo" type="button">加载人体骨骼动作示例</button><span class="viewer-note">官方测试模型：Cesium Man（CC BY 4.0），用于验证骨骼蒙皮与行走动画，不代表最终超写实数字人效果。</span></div><input id="modelInput" type="file" accept=".glb,model/gltf-binary,model/gltf+json"><div id="modelStatus" class="status">尚未选择模型</div><div class="viewer" id="modelViewer"><div id="viewerPlaceholder">选择一个 GLB 模型<br>在这里旋转、缩放和查看模型动画</div><canvas id="modelCanvas"></canvas></div><div class="viewer-tools"><button id="animationToggle" type="button" disabled>暂停动画</button><button id="resetCamera" type="button" disabled>重置视角</button><select id="animationSelect" aria-label="选择模型动画" disabled><option value="">无内置动画</option></select></div><div class="model-inspection" id="modelInspection"><div class="inspection-head"><div><strong>模型能力检测</strong><span id="inspectionSummary">等待模型</span></div><button class="secondary" id="resetExpressions" type="button">重置形变</button></div><div class="inspection-grid"><div class="inspection-stat"><b id="statMeshes">—</b><span>网格</span></div><div class="inspection-stat"><b id="statSkinned">—</b><span>蒙皮网格</span></div><div class="inspection-stat"><b id="statBones">—</b><span>骨骼</span></div><div class="inspection-stat"><b id="statMorphs">—</b><span>形变目标</span></div><div class="inspection-stat"><b id="statAnimations">—</b><span>动画</span></div></div><div class="inspection-block"><div class="inspection-title">表情 / 形变测试</div><p>如果模型带有形变目标，可以拖动滑块查看效果；没有形变目标时不会凭空生成表情。</p><div id="expressionControls" class="expression-controls">尚未检测</div></div><div class="inspection-block"><div class="inspection-title">骨骼节点</div><div id="boneNames" class="bone-names">尚未检测</div></div><div class="inspection-foot" id="inspectionNote">检测只读取模型已有结构，不会自动补骨骼、表情或动作。</div></div><div class="viewer-note">先在本机校验 GLB 结构，再上传到私有云端；模型文件不会公开生成下载链接。</div></div>
 <div class="panel"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><h3 style="margin:0">我的云端素材</h3><button class="secondary" id="refreshAssets" type="button">刷新</button></div><div id="cloudAssetsList" class="hint" style="margin-top:14px">连接云端后显示已上传素材。</div><div id="assetPreview" style="margin-top:14px"></div></div>
 <div class="panel"><h3>鑫灵 AI 对话</h3><p class="hint">DeepSeek API Key 由服务器 Secret 保管，网页不直接接触密钥。</p><div class="chat-log" id="chatLog" aria-live="polite"><div class="chat-bubble assistant">你好，我是鑫灵 AI 助手。完成后端配置后就可以开始对话。</div></div><div class="chat-row"><input id="chatMessage" type="text" maxlength="2000" placeholder="输入你想说的话…" autocomplete="off"><button id="sendChat" type="button">发送</button></div><div class="status" id="chatFeedback">内部测试模式。</div></div>
@@ -399,6 +407,86 @@ async function deleteCloudAsset(item){
   document.getElementById('assetPreview').textContent='素材已从云端删除。';refreshCloudAssets();
  }catch(error){alert(error.message||'删除失败');}
 }
+
+// Photo/video -> multi-view frames -> server-side 3D task. No GLB input is required from customers.
+const avatarInput=document.getElementById('avatarSourceInput');
+const avatarConsent=document.getElementById('avatarConsent');
+const avatarButton=document.getElementById('generateAvatarButton');
+const avatarStatus=document.getElementById('avatarGenerationStatus');
+function waitEvent(target,name){return new Promise((resolve,reject)=>{const ok=()=>{cleanup();resolve();},bad=()=>{cleanup();reject(new Error('无法读取所选视频，请换一个 MP4/MOV 文件。'));},cleanup=()=>{target.removeEventListener(name,ok);target.removeEventListener('error',bad);};target.addEventListener(name,ok,{once:true});target.addEventListener('error',bad,{once:true});});}
+function canvasJpeg(canvas){return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('照片帧压缩失败。')),'image/jpeg',0.84));}
+async function imageToDataUri(file){
+ const bitmap=await createImageBitmap(file);
+ const scale=Math.min(1,1400/Math.max(bitmap.width,bitmap.height));
+ const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(bitmap.width*scale));canvas.height=Math.max(1,Math.round(bitmap.height*scale));
+ canvas.getContext('2d',{alpha:false}).drawImage(bitmap,0,0,canvas.width,canvas.height);bitmap.close?.();
+ const blob=await canvasJpeg(canvas);return await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(new Error('照片读取失败。'));reader.readAsDataURL(blob);});
+}
+async function videoFramesToDataUris(file){
+ const url=URL.createObjectURL(file),video=document.createElement('video');video.preload='auto';video.muted=true;video.playsInline=true;video.src=url;
+ try{
+  await waitEvent(video,'loadedmetadata');
+  if(!Number.isFinite(video.duration)||video.duration<0.5)throw new Error('视频太短，无法提取有效画面。');
+  const canvas=document.createElement('canvas'),scale=Math.min(1,1400/Math.max(video.videoWidth,video.videoHeight));canvas.width=Math.max(1,Math.round(video.videoWidth*scale));canvas.height=Math.max(1,Math.round(video.videoHeight*scale));
+  const ctx=canvas.getContext('2d',{alpha:false}),frames=[];
+  for(const ratio of [0.12,0.36,0.64,0.88]){
+   const seek=Math.min(Math.max(0.05,video.duration*ratio),Math.max(0,video.duration-0.08));
+   const seeked=waitEvent(video,'seeked');video.currentTime=seek;await seeked;ctx.drawImage(video,0,0,canvas.width,canvas.height);
+   const blob=await canvasJpeg(canvas);const data=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(new Error('视频画面读取失败。'));reader.readAsDataURL(blob);});frames.push(data);
+  }
+  return frames;
+ }finally{video.pause();video.removeAttribute('src');video.load();URL.revokeObjectURL(url);}
+}
+async function prepareAvatarImages(files){
+ const images=[];
+ for(const file of files){
+  if(file.type.startsWith('image/')) images.push(await imageToDataUri(file));
+  else if(file.type.startsWith('video/')) images.push(...await videoFramesToDataUris(file));
+  else throw new Error('仅支持 JPG、PNG、WEBP、MP4、MOV、WEBM。');
+  if(images.length>=4)break;
+ }
+ return images.slice(0,4);
+}
+async function pollAvatarTask(taskId){
+ for(let attempt=0;attempt<90;attempt++){
+  const response=await fetch('./api/avatar/generate/'+encodeURIComponent(taskId),{headers:{'x-app-access-key':window.xinlingGetTestKey()},cache:'no-store'});
+  const data=await response.json();if(!response.ok)throw new Error(data.error||'读取生成进度失败。');
+  avatarStatus.textContent='3D 模型生成中：'+data.status+' · '+(data.progress||0)+'%';
+  if(data.status==='SUCCEEDED'){
+   avatarStatus.textContent='模型已生成，正在安全下载并加载到 3D 视窗…';
+   const modelResponse=await fetch('./api/avatar/model/'+encodeURIComponent(taskId),{headers:{'x-app-access-key':window.xinlingGetTestKey()},cache:'no-store'});
+   if(!modelResponse.ok){const err=await modelResponse.json().catch(()=>({}));throw new Error(err.error||'生成结果下载失败。');}
+   const blob=await modelResponse.blob(),file=new File([blob],'xinling-generated-avatar.glb',{type:'model/gltf-binary'});
+   if(!window.xinlingLoadGeneratedModel)throw new Error('3D 视窗尚未准备好，请刷新页面后重试。');
+   await window.xinlingLoadGeneratedModel(file);
+   avatarStatus.textContent='基础 3D 人物模型已加载。骨骼绑定、面部表情、口型与身体动作仍需后续接入和验证。';
+   return;
+  }
+  if(data.status==='FAILED'||data.status==='CANCELED')throw new Error(data.taskError||'3D 服务生成失败，请换一组清晰的多角度素材。');
+  await new Promise(resolve=>setTimeout(resolve,5000));
+ }
+ throw new Error('生成任务仍在后台运行。稍后可再次查询任务；请勿重复点击生成。');
+}
+avatarButton.addEventListener('click',async()=>{
+ const files=Array.from(avatarInput.files||[]),key=window.xinlingGetTestKey();
+ if(!key){avatarStatus.textContent='请先填写并保存内部测试口令。';return;}
+ if(!avatarConsent.checked){avatarStatus.textContent='请先确认肖像授权和第三方处理说明。';return;}
+ if(!files.length){avatarStatus.textContent='请先选择照片或视频。';return;}
+ if(files.some(file=>file.size>50*1024*1024)){avatarStatus.textContent='单个文件不能超过 50 MB。';return;}
+ avatarButton.disabled=true;
+ try{
+  avatarStatus.textContent='正在本机提取并压缩照片/视频关键帧…';
+  const imageUrls=await prepareAvatarImages(files);
+  if(!imageUrls.length)throw new Error('没有提取到可用图片。');
+  avatarStatus.textContent='已准备 '+imageUrls.length+' 张参考画面，正在提交 3D 生成任务…';
+  const response=await fetch('./api/avatar/generate',{method:'POST',headers:{'content-type':'application/json','x-app-access-key':key},body:JSON.stringify({imageUrls})});
+  const data=await response.json();if(!response.ok)throw new Error(data.error||('提交失败：'+response.status));
+  avatarStatus.textContent='任务已创建，编号：'+data.taskId+'。正在等待生成…';
+  await pollAvatarTask(data.taskId);
+ }catch(error){avatarStatus.textContent=error.message||'生成任务失败。';}
+ finally{avatarButton.disabled=false;}
+});
+
 document.getElementById('mediaInput').addEventListener('change',async e=>{
  const f=e.target.files[0],box=document.getElementById('mediaPreview');if(!f)return;
  if(currentPreviewUrl)URL.revokeObjectURL(currentPreviewUrl);
@@ -826,14 +914,14 @@ resetExpressions.addEventListener('click', () => {
 });
 
 async function loadModelFile(file, saveToCloud = true) {
-  if (!file) return;
+  if (!file) return false;
   if (!file.name.toLowerCase().endsWith('.glb')) {
     status.textContent = '目前请使用 GLB 格式模型。';
-    return;
+    return false;
   }
   if (file.size > 50 * 1024 * 1024) {
     status.textContent = '这个模型超过 50 MB。为了手机运行稳定，请先使用较小的 GLB 文件。';
-    return;
+    return false;
   }
   status.textContent = '正在本机校验模型结构…';
   let buffer;
@@ -842,11 +930,12 @@ async function loadModelFile(file, saveToCloud = true) {
     validateSelfContainedGlb(buffer);
   } catch (error) {
     status.textContent = error.message || '读取或校验 GLB 失败，请重新选择模型。';
-    return;
+    return false;
   }
-  if (!setupViewer()) return;
+  if (!setupViewer()) return false;
   status.textContent = '本机校验通过，正在加载 3D 模型…';
   const loader = new GLTFLoader();
+  return new Promise(resolve => {
   loader.parse(buffer, '', async gltf => {
     clearPreviousModel();
     activeModel = gltf.scene;
@@ -866,11 +955,16 @@ async function loadModelFile(file, saveToCloud = true) {
       }
     }
     status.textContent = '模型已显示：' + file.name + ' · 骨骼 ' + report.boneCount + ' · 形变 ' + report.morphTargetCount + ' · 动画 ' + report.animationCount + cloudSaveMessage;
+    resolve(true);
   }, error => {
     status.textContent = '模型解析失败。请确认 GLB 文件完整且符合 glTF 2.0。';
     console.error(error);
+    resolve(false);
+  });
   });
 }
+
+window.xinlingLoadGeneratedModel = async file => { const loaded = await loadModelFile(file, true); if (!loaded) throw new Error('生成的模型未能成功解析，请查看 3D 模型状态。'); };
 
 modelInput.addEventListener('change', event => {
   const file = event.target.files && event.target.files[0];
