@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "deploy": "wrangler deploy",
-    "preview": "wrangler preview"
+    "preview": "wrangler preview",
+    "test:storage": "node scripts/storage-smoke-test.mjs"
   },
   "devDependencies": {
     "wrangler": "^4.68.0"
