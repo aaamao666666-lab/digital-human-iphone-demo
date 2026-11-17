@@ -43,6 +43,9 @@
 
 - APP_TEST_KEY：内部测试随机口令，由项目管理员自行生成并保管。
 - DEEPSEEK_API_KEY：DeepSeek API Key，只保存在服务端 Secret。
+- GEMINI_API_KEY：Google AI Studio 创建的 Gemini API Key（可选，只保存在服务端 Secret）。
+- GEMINI_MODEL：可选普通变量，默认 `gemini-flash-latest`；按 Google 当前可用模型调整。
+- DEEPSEEK_MODEL：可选普通变量，默认 `deepseek-chat`。
 
 不要把任何密钥写入网页、GitHub 仓库或聊天消息。
 
@@ -56,6 +59,7 @@
 健康检查字段：
 
 - deepseekConfigured：DeepSeek Secret 是否存在。
+- geminiConfigured：Gemini Secret 是否存在。
 - accessGateConfigured：内部测试口令是否存在。
 - cloudStorageConfigured：Supabase 或 R2 是否已连接。
 - storageProvider：当前使用 supabase、r2 或 未连接。
