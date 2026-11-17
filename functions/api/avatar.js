@@ -66,3 +66,49 @@ export async function onRequestGetModel({request,env,params}){
   return new Response(bytes,{status:200,headers:{"content-type":"model/gltf-binary","content-disposition":"attachment; filename=xinling-generated-avatar.glb","cache-control":"private, no-store","x-content-type-options":"nosniff"}});
  }catch(error){console.error("Meshy model download error",error);return json({error:"暂时无法下载生成模型。"},502);}
 }
+
+export async function onRequestRigPost({request,env}){
+ if(!authorized(request,env))return json({error:"未授权。"},401);
+ let body;try{body=await request.json();}catch{return json({error:"请求格式不正确。"},400);}
+ const sourceTaskId=String(body?.taskId||"");
+ if(!validTaskId(sourceTaskId))return json({error:"3D 生成任务编号无效。"},400);
+ try{
+  const source=await meshyRequest(env,"/multi-image-to-3d/"+encodeURIComponent(sourceTaskId),{method:"GET",headers:{}});
+  if(!source.ok)return json({error:"读取基础模型任务失败。"},502);
+  const sourceTask=await source.json();
+  if(sourceTask.status!=="SUCCEEDED")return json({error:"基础 3D 模型尚未生成完成。"},409);
+  const upstream=await meshyRequest(env,"/rigging",{method:"POST",body:JSON.stringify({
+   input_task_id:sourceTaskId,skeleton_template:"mixamo",include_fingers:false,height_meters:1.65
+  })});
+  if(!upstream.ok){
+   const detail=await upstream.text();console.error("Meshy rig create error",upstream.status,detail.slice(0,800));
+   if(upstream.status===402)return json({error:"骨骼绑定额度不足或套餐不支持 API。基础 3D 模型已生成，但尚未绑定骨骼。"},402);
+   return json({error:"骨骼绑定服务暂时未能接受任务（"+upstream.status+"）。基础 3D 模型仍可查看。"},502);
+  }
+  const data=await upstream.json();if(!data?.result)return json({error:"骨骼绑定服务没有返回任务编号。"},502);
+  return json({ok:true,taskId:data.result,status:"PENDING"});
+ }catch(error){console.error("Meshy rig create failed",error);return json({error:"无法连接骨骼绑定服务。"},502);}
+}
+export async function onRequestRigGet({request,env,params}){
+ if(!authorized(request,env))return json({error:"未授权。"},401);
+ const taskId=String(params?.taskId||"");if(!validTaskId(taskId))return json({error:"骨骼任务编号无效。"},400);
+ try{
+  const upstream=await meshyRequest(env,"/rigging/"+encodeURIComponent(taskId),{method:"GET",headers:{}});
+  if(!upstream.ok)return json({error:"读取骨骼绑定进度失败（"+upstream.status+"）。"},502);
+  const task=await upstream.json();return json({taskId:task.id,status:task.status,progress:Number(task.progress||0),taskError:task.task_error?.message||null});
+ }catch(error){console.error("Meshy rig status error",error);return json({error:"暂时无法读取骨骼绑定进度。"},502);}
+}
+export async function onRequestRigModelGet({request,env,params}){
+ if(!authorized(request,env))return json({error:"未授权。"},401);
+ const taskId=String(params?.taskId||"");if(!validTaskId(taskId))return json({error:"骨骼任务编号无效。"},400);
+ try{
+  const upstream=await meshyRequest(env,"/rigging/"+encodeURIComponent(taskId),{method:"GET",headers:{}});
+  if(!upstream.ok)return json({error:"读取骨骼模型任务失败。"},502);
+  const task=await upstream.json(),url=task.result?.rigged_character_glb_url;
+  if(task.status!=="SUCCEEDED"||!url)return json({error:"骨骼模型尚未生成完成。"},409);
+  const model=await fetch(url,{headers:{accept:"model/gltf-binary"}});
+  if(!model.ok)return json({error:"下载骨骼模型失败。"},502);
+  const bytes=await model.arrayBuffer();if(!bytes.byteLength||bytes.byteLength>50*1024*1024)return json({error:"骨骼模型超过 50 MB 或文件为空。"},413);
+  return new Response(bytes,{status:200,headers:{"content-type":"model/gltf-binary","content-disposition":"attachment; filename=xinling-rigged-avatar.glb","cache-control":"private, no-store","x-content-type-options":"nosniff"}});
+ }catch(error){console.error("Meshy rig model download error",error);return json({error:"暂时无法下载骨骼模型。"},502);}
+}

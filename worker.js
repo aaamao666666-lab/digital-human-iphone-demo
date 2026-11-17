@@ -2,7 +2,7 @@ import { onRequestGet as healthGet } from "./functions/api/health.js";
 import { onRequestGet as assetsListGet, onRequestPost as assetsUploadPost } from "./functions/api/assets.js";
 import { onRequestPost as chatPost } from "./functions/api/chat.js";
 import { onRequestGet as assetGet, onRequestDelete as assetDelete } from "./functions/api/assets/[assetId].js";
-import { onRequestPost as avatarCreatePost, onRequestGet as avatarStatusGet, onRequestGetModel as avatarModelGet } from "./functions/api/avatar.js";
+import { onRequestPost as avatarCreatePost, onRequestGet as avatarStatusGet, onRequestGetModel as avatarModelGet, onRequestRigPost, onRequestRigGet, onRequestRigModelGet } from "./functions/api/avatar.js";
 
 const JSON_HEADERS={ "content-type":"application/json; charset=utf-8", "cache-control":"no-store" };
 const ALLOWED_ORIGINS=new Set(["https://aaamao666666-lab.github.io","https://digital-human-iphone-demo.aaamao666666.workers.dev"]);
@@ -37,7 +37,7 @@ export default {
    response=request.method==="GET"?await healthGet({request,env,params:{},waitUntil:p=>ctx.waitUntil(p)}):methodNotAllowed(["GET"]);
    return cors(request,response);
   }
-  const avatarMatch=path.match(/^\/api\/avatar\/(generate|model)(?:\/([^/]+))?$/);
+  const avatarMatch=path.match(/^\/api\/avatar\/(generate|model|rig|rig-model)(?:\/([^/]+))?$/);
   if(avatarMatch){
    const action=avatarMatch[1],taskId=avatarMatch[2]||"";
    if(action==="generate"&&!taskId){
@@ -50,6 +50,18 @@ export default {
    }
    if(action==="model"&&taskId){
     response=request.method==="GET"?await avatarModelGet({request,env,params:{taskId}}):methodNotAllowed(["GET"]);
+    return cors(request,response);
+   }
+   if(action==="rig"&&!taskId){
+    response=request.method==="POST"?await onRequestRigPost({request,env,params:{}}):methodNotAllowed(["POST"]);
+    return cors(request,response);
+   }
+   if(action==="rig"&&taskId){
+    response=request.method==="GET"?await onRequestRigGet({request,env,params:{taskId}}):methodNotAllowed(["GET"]);
+    return cors(request,response);
+   }
+   if(action==="rig-model"&&taskId){
+    response=request.method==="GET"?await onRequestRigModelGet({request,env,params:{taskId}}):methodNotAllowed(["GET"]);
     return cors(request,response);
    }
   }

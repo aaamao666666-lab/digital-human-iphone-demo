@@ -329,9 +329,9 @@ img,video,canvas,svg{max-width:100%}
 <div class="panel"><h3>上传照片或视频到云端</h3><p class="hint">支持 JPG、PNG、WEBP、GIF、MP4、MOV、WEBM；单个文件最大 50 MB。</p><div class="upload-zone"><div>选择照片或视频</div><input id="mediaInput" type="file" accept="image/*,video/*"></div><div id="mediaPreview" class="hint" aria-live="polite">选择文件后自动上传到私有云端。</div></div>
 <div class="panel" id="avatarGenerationPanel">
 <h3>上传照片 / 视频，自动生成 3D 数字人</h3>
-<p class="hint">客户只需上传本人或已获授权的照片/视频。照片最多 4 张；视频会在手机本机自动截取关键帧，再提交生成基础 3D 人物模型。系统会在后台调用 3D 服务，客户不需要 GLB 文件。</p>
+<p class="hint">客户只需上传本人或已获授权的照片/视频。照片最多 4 张；视频会在手机本机自动截取关键帧，再提交生成基础 3D 人物模型并尝试自动骨骼绑定。系统会在后台调用 3D 服务，客户不需要 GLB 文件。</p>
 <div class="upload-zone"><div>选择照片或视频（可多选，最多 4 个素材）</div><input id="avatarSourceInput" type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/webm" multiple></div>
-<label style="display:flex;gap:9px;align-items:flex-start;font-size:12px;line-height:1.7;color:#687565;margin:14px 0"><input id="avatarConsent" type="checkbox" style="margin-top:3px">我确认已取得本人或肖像权利人的明确授权，并知悉提交后素材会发送给第三方 3D 服务商；生成可能消耗服务商账户额度。</label>
+<label style="display:flex;gap:9px;align-items:flex-start;font-size:12px;line-height:1.7;color:#687565;margin:14px 0"><input id="avatarConsent" type="checkbox" style="margin-top:3px">我确认已取得本人或肖像权利人的明确授权，并知悉提交后素材会发送给第三方 3D 服务商；生成模型与自动骨骼绑定均可能消耗服务商账户额度。</label>
 <button class="primary" id="generateAvatarButton" type="button" style="width:100%">开始生成我的 3D 数字人</button>
 <div id="avatarGenerationStatus" class="status" aria-live="polite">等待选择素材。当前仅在服务端配置生成服务密钥后才能开始。</div>
 </div>
@@ -447,19 +447,41 @@ async function prepareAvatarImages(files){
  }
  return images.slice(0,4);
 }
+async function loadAvatarModel(endpoint,taskId,name){
+ const response=await fetch('./api/avatar/'+endpoint+'/'+encodeURIComponent(taskId),{headers:{'x-app-access-key':window.xinlingGetTestKey()},cache:'no-store'});
+ if(!response.ok){const err=await response.json().catch(()=>({}));throw new Error(err.error||'模型下载失败。');}
+ const blob=await response.blob(),file=new File([blob],name,{type:'model/gltf-binary'});
+ if(!window.xinlingLoadGeneratedModel)throw new Error('3D 视窗尚未准备好，请刷新页面后重试。');
+ await window.xinlingLoadGeneratedModel(file);
+}
+async function pollAvatarRig(rigTaskId){
+ for(let attempt=0;attempt<90;attempt++){
+  const response=await fetch('./api/avatar/rig/'+encodeURIComponent(rigTaskId),{headers:{'x-app-access-key':window.xinlingGetTestKey()},cache:'no-store'});
+  const data=await response.json();if(!response.ok)throw new Error(data.error||'读取骨骼绑定进度失败。');
+  avatarStatus.textContent='正在绑定人体骨骼：'+data.status+' · '+(data.progress||0)+'%';
+  if(data.status==='SUCCEEDED'){
+   avatarStatus.textContent='骨骼绑定完成，正在加载可驱动模型…';
+   await loadAvatarModel('rig-model',rigTaskId,'xinling-rigged-avatar.glb');
+   avatarStatus.textContent='基础 3D 人物模型与骨骼绑定模型均已生成，骨骼模型已加载。面部表情、口型同步和更丰富的身体动作仍需后续接入。';
+   return;
+  }
+  if(data.status==='FAILED'||data.status==='CANCELED')throw new Error(data.taskError||'骨骼绑定未成功，基础 3D 模型仍保留在视窗中。');
+  await new Promise(resolve=>setTimeout(resolve,5000));
+ }
+ throw new Error('骨骼绑定仍在后台运行，请稍后重新查询。');
+}
 async function pollAvatarTask(taskId){
  for(let attempt=0;attempt<90;attempt++){
   const response=await fetch('./api/avatar/generate/'+encodeURIComponent(taskId),{headers:{'x-app-access-key':window.xinlingGetTestKey()},cache:'no-store'});
   const data=await response.json();if(!response.ok)throw new Error(data.error||'读取生成进度失败。');
-  avatarStatus.textContent='3D 模型生成中：'+data.status+' · '+(data.progress||0)+'%';
+  avatarStatus.textContent='基础 3D 模型生成中：'+data.status+' · '+(data.progress||0)+'%';
   if(data.status==='SUCCEEDED'){
-   avatarStatus.textContent='模型已生成，正在安全下载并加载到 3D 视窗…';
-   const modelResponse=await fetch('./api/avatar/model/'+encodeURIComponent(taskId),{headers:{'x-app-access-key':window.xinlingGetTestKey()},cache:'no-store'});
-   if(!modelResponse.ok){const err=await modelResponse.json().catch(()=>({}));throw new Error(err.error||'生成结果下载失败。');}
-   const blob=await modelResponse.blob(),file=new File([blob],'xinling-generated-avatar.glb',{type:'model/gltf-binary'});
-   if(!window.xinlingLoadGeneratedModel)throw new Error('3D 视窗尚未准备好，请刷新页面后重试。');
-   await window.xinlingLoadGeneratedModel(file);
-   avatarStatus.textContent='基础 3D 人物模型已加载。骨骼绑定、面部表情、口型与身体动作仍需后续接入和验证。';
+   avatarStatus.textContent='基础 3D 模型已生成，正在加载…';
+   await loadAvatarModel('model',taskId,'xinling-generated-avatar.glb');
+   avatarStatus.textContent='基础模型已加载，正在提交自动骨骼绑定…';
+   const rigResponse=await fetch('./api/avatar/rig',{method:'POST',headers:{'content-type':'application/json','x-app-access-key':window.xinlingGetTestKey()},body:JSON.stringify({taskId})});
+   const rigData=await rigResponse.json();if(!rigResponse.ok)throw new Error(rigData.error||'基础模型已生成，但自动骨骼绑定未能启动。');
+   await pollAvatarRig(rigData.taskId);
    return;
   }
   if(data.status==='FAILED'||data.status==='CANCELED')throw new Error(data.taskError||'3D 服务生成失败，请换一组清晰的多角度素材。');
