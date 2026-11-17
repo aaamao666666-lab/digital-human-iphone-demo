@@ -338,7 +338,7 @@ img,video,canvas,svg{max-width:100%}
 <div class="panel"><h3>导入并保存 3D 模型</h3><p class="hint">支持 50 MB 以内、自带纹理资源的 GLB 2.0。先在本机校验、预览并检测骨骼/形变/动画，通过后再上传到私有云端。</p><div class="viewer-tools"><button id="loadHumanoidDemo" type="button">加载人体骨骼动作示例</button><span class="viewer-note">官方测试模型：Cesium Man（CC BY 4.0），用于验证骨骼蒙皮与行走动画，不代表最终超写实数字人效果。</span></div><input id="modelInput" type="file" accept=".glb,model/gltf-binary,model/gltf+json"><div id="modelStatus" class="status">尚未选择模型</div><div class="viewer" id="modelViewer"><div id="viewerPlaceholder">选择一个 GLB 模型<br>在这里旋转、缩放和查看模型动画</div><canvas id="modelCanvas"></canvas></div><div class="viewer-tools"><button id="animationToggle" type="button" disabled>暂停动画</button><button id="idleMotionToggle" type="button" disabled>待机动作：开</button><button id="lipSyncToggle" type="button" disabled>开启麦克风口型同步</button><button id="resetCamera" type="button" disabled>重置视角</button><select id="animationSelect" aria-label="选择模型动画" disabled><option value="">无内置动画</option></select></div><p class="viewer-note">待机动作在本机运行；口型同步使用麦克风实时音量驱动模型已有的嘴部形变或下颌骨，不录音、不上传声音。需要模型具备相应面部结构。</p><div class="model-inspection" id="modelInspection"><div class="inspection-head"><div><strong>模型能力检测</strong><span id="inspectionSummary">等待模型</span></div><button class="secondary" id="resetExpressions" type="button">重置形变</button></div><div class="inspection-grid"><div class="inspection-stat"><b id="statMeshes">—</b><span>网格</span></div><div class="inspection-stat"><b id="statSkinned">—</b><span>蒙皮网格</span></div><div class="inspection-stat"><b id="statBones">—</b><span>骨骼</span></div><div class="inspection-stat"><b id="statMorphs">—</b><span>形变目标</span></div><div class="inspection-stat"><b id="statAnimations">—</b><span>动画</span></div></div><div class="inspection-block"><div class="inspection-title">表情 / 形变测试</div><p>如果模型带有形变目标，可以拖动滑块查看效果；没有形变目标时不会凭空生成表情。</p><div id="expressionControls" class="expression-controls">尚未检测</div></div><div class="inspection-block"><div class="inspection-title">骨骼节点</div><div id="boneNames" class="bone-names">尚未检测</div></div><div class="inspection-foot" id="inspectionNote">检测只读取模型已有结构，不会自动补骨骼、表情或动作。</div></div><div class="viewer-note">先在本机校验 GLB 结构，再上传到私有云端；模型文件不会公开生成下载链接。</div></div>
 <div class="panel"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><h3 style="margin:0">我的云端素材</h3><button class="secondary" id="refreshAssets" type="button">刷新</button></div><div id="cloudAssetsList" class="hint" style="margin-top:14px">连接云端后显示已上传素材。</div><div id="assetPreview" style="margin-top:14px"></div></div>
 <div class="panel"><h3>鑫灵 AI 对话</h3><p class="hint">DeepSeek API Key 由服务器 Secret 保管，网页不直接接触密钥。</p><div class="chat-log" id="chatLog" aria-live="polite"><div class="chat-bubble assistant">你好，我是鑫灵 AI 助手。完成后端配置后就可以开始对话。</div></div><div class="chat-row"><input id="chatMessage" type="text" maxlength="2000" placeholder="输入你想说的话…" autocomplete="off"><button id="sendChat" type="button">发送</button></div><div class="status" id="chatFeedback">内部测试模式。</div></div>
-<div class="panel"><h3>数字人动作与生成</h3><p class="hint">照片自动生成 3D、骨骼动作绑定、面部表情、语音和口型同步仍需专用生成服务，尚未接入。你上传的原始素材会先安全保存在私有云端。</p><span class="status">开发状态：待接入</span></div></section>
+<div class="panel"><h3>数字人动作与生成</h3><p class="hint">已接入照片/视频自动生成 3D、骨骼绑定、基础行走动画加载、骨骼待机动作，以及模型具备嘴部形变或下颌骨时的本机麦克风口型驱动。高精度面部表情生成、语音合成与语音驱动口型仍需专用模型服务。</p><span class="status">开发状态：基础动作已接入，面部细节持续开发</span></div></section>
 <section class="workspace" id="mine"><div class="kicker">YOUR XINLING</div><h2>我的</h2><div class="panel"><h3>鑫灵 AI 账户</h3><p class="hint">当前为体验版，没有登录账户或云端个人资料。</p></div><div class="panel"><h3>我的素材</h3><p class="hint">内部测试照片、视频和模型上传后保存在私有云端素材库，可在工作台查看与删除。</p></div><div class="panel"><h3>版本信息</h3><p class="hint">鑫灵 AI · 清新写实体验版</p></div></section>
 <nav class="bottom-nav" aria-label="底部导航"><button class="active" data-page="home"><span>⌂</span>首页</button><button data-page="studio"><span>✧</span>工作台</button><button data-page="mine"><span>♡</span>我的</button></nav>
 <footer class="footer"><span>© 2026 鑫灵 AI 数字人 · XINLING AI</span><span>清新写实 · 时尚美学 · 真实表达</span></footer>
@@ -651,7 +651,7 @@ function configureIdleMotion(root) {
 }
 
 function updateIdleMotion(delta) {
-  if (!idleMotionEnabled || !idleBones.length || (mixer && !animationPaused)) return;
+  if (!idleMotionEnabled || !idleBones.length || activeAction) return;
   idleMotionTime += delta;
   idleBones.forEach(({bone,kind,base,phase}) => {
     const t=idleMotionTime;
@@ -983,15 +983,20 @@ function inspectModel(root, animations) {
 
   animationSelect.replaceChildren();
   if (clips.length) {
+    animationSelect.append(new Option('自然待机（默认）', ''));
     clips.forEach((clip, index) => {
       const option = document.createElement('option');
       option.value = String(index);
       option.textContent = (index + 1) + '. ' + (clip.name || ('动画 ' + (index + 1)));
       animationSelect.append(option);
     });
+    animationSelect.value = '';
     animationSelect.disabled = false;
     mixer = new THREE.AnimationMixer(root);
-    playAnimation(0, clips);
+    activeAction = null;
+    animationPaused = false;
+    animationToggle.disabled = true;
+    animationToggle.textContent = '选择动作后播放';
   } else {
     animationSelect.append(new Option('无内置动画', ''));
     animationSelect.disabled = true;
@@ -1016,6 +1021,15 @@ function playAnimation(index, clips) {
 
 let activeClips = [];
 animationSelect.addEventListener('change', () => {
+  if (animationSelect.value === '') {
+    if (mixer) mixer.stopAllAction();
+    activeAction = null;
+    animationPaused = false;
+    animationToggle.disabled = true;
+    animationToggle.textContent = '自然待机中';
+    resetIdlePose();
+    return;
+  }
   playAnimation(Number(animationSelect.value), activeClips);
 });
 animationToggle.addEventListener('click', () => {
