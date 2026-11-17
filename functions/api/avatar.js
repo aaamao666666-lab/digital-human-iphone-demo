@@ -50,7 +50,7 @@ export async function onRequestGet({request,env,params}){
   const task=await upstream.json();return json(safeTask(task));
  }catch(error){console.error("Meshy status error",error);return json({error:"暂时无法读取生成进度。"},502);}
 }
-export async function onRequestGet({request,env,params}){
+export async function onRequestGetModel({request,env,params}){
  if(!authorized(request,env))return json({error:"未授权。"},401);
  const taskId=String(params?.taskId||"");
  if(!validTaskId(taskId))return json({error:"任务编号无效。"},400);
