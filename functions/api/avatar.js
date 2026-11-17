@@ -98,6 +98,23 @@ export async function onRequestRigGet({request,env,params}){
   const task=await upstream.json();return json({taskId:task.id,status:task.status,progress:Number(task.progress||0),taskError:task.task_error?.message||null});
  }catch(error){console.error("Meshy rig status error",error);return json({error:"暂时无法读取骨骼绑定进度。"},502);}
 }
+
+
+// Serve Meshy's bundled walking animation through the Worker so the signed provider URL stays private.
+export async function onRequestRigWalkModelGet({request,env,params}){
+ if(!authorized(request,env))return json({error:"未授权。"},401);
+ const taskId=String(params?.taskId||"");if(!validTaskId(taskId))return json({error:"骨骼任务编号无效。"},400);
+ try{
+  const upstream=await meshyRequest(env,"/rigging/"+encodeURIComponent(taskId),{method:"GET",headers:{}});
+  if(!upstream.ok)return json({error:"读取动作模型任务失败。"},502);
+  const task=await upstream.json(),url=task.result?.basic_animations?.walking_glb_url;
+  if(task.status!=="SUCCEEDED"||!url)return json({error:"服务商未提供行走动画模型。"},404);
+  const model=await fetch(url,{headers:{accept:"model/gltf-binary"}});
+  if(!model.ok)return json({error:"下载行走动画模型失败。"},502);
+  const bytes=await model.arrayBuffer();if(!bytes.byteLength||bytes.byteLength>50*1024*1024)return json({error:"行走动画模型超过 50 MB 或文件为空。"},413);
+  return new Response(bytes,{status:200,headers:{"content-type":"model/gltf-binary","content-disposition":"attachment; filename=xinling-walking-avatar.glb","cache-control":"private, no-store","x-content-type-options":"nosniff"}});
+ }catch(error){console.error("Meshy walking animation download error",error);return json({error:"暂时无法下载行走动画模型。"},502);}
+}
 export async function onRequestRigModelGet({request,env,params}){
  if(!authorized(request,env))return json({error:"未授权。"},401);
  const taskId=String(params?.taskId||"");if(!validTaskId(taskId))return json({error:"骨骼任务编号无效。"},400);
