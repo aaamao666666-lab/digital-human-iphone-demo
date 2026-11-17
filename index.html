@@ -329,7 +329,7 @@ img,video,canvas,svg{max-width:100%}
 <div class="panel"><h3>上传照片或视频到云端</h3><p class="hint">支持 JPG、PNG、WEBP、GIF、MP4、MOV、WEBM；单个文件最大 50 MB。</p><div class="upload-zone"><div>选择照片或视频</div><input id="mediaInput" type="file" accept="image/*,video/*"></div><div id="mediaPreview" class="hint" aria-live="polite">选择文件后自动上传到私有云端。</div></div>
 <div class="panel" id="avatarGenerationPanel">
 <h3>上传照片 / 视频，自动生成 3D 数字人</h3>
-<p class="hint">客户只需上传本人或已获授权的照片/视频。照片最多 4 张；视频会在手机本机自动截取 4 个关键帧，再提交生成。系统会在后台调用 3D 服务，客户不需要 GLB 文件。</p>
+<p class="hint">客户只需上传本人或已获授权的照片/视频。照片最多 4 张；视频会在手机本机自动截取关键帧，再提交生成基础 3D 人物模型。系统会在后台调用 3D 服务，客户不需要 GLB 文件。</p>
 <div class="upload-zone"><div>选择照片或视频（可多选，最多 4 个素材）</div><input id="avatarSourceInput" type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/webm" multiple></div>
 <label style="display:flex;gap:9px;align-items:flex-start;font-size:12px;line-height:1.7;color:#687565;margin:14px 0"><input id="avatarConsent" type="checkbox" style="margin-top:3px">我确认已取得本人或肖像权利人的明确授权，并知悉提交后素材会发送给第三方 3D 服务商；生成可能消耗服务商账户额度。</label>
 <button class="primary" id="generateAvatarButton" type="button" style="width:100%">开始生成我的 3D 数字人</button>
@@ -459,7 +459,7 @@ async function pollAvatarTask(taskId){
    const blob=await modelResponse.blob(),file=new File([blob],'xinling-generated-avatar.glb',{type:'model/gltf-binary'});
    if(!window.xinlingLoadGeneratedModel)throw new Error('3D 视窗尚未准备好，请刷新页面后重试。');
    await window.xinlingLoadGeneratedModel(file);
-   avatarStatus.textContent='生成完成。已自动加载模型；请检查人物外观、骨骼和动作检测结果。';
+   avatarStatus.textContent='基础 3D 人物模型已加载。骨骼绑定、面部表情、口型与身体动作仍需后续接入和验证。';
    return;
   }
   if(data.status==='FAILED'||data.status==='CANCELED')throw new Error(data.taskError||'3D 服务生成失败，请换一组清晰的多角度素材。');
@@ -914,14 +914,14 @@ resetExpressions.addEventListener('click', () => {
 });
 
 async function loadModelFile(file, saveToCloud = true) {
-  if (!file) return;
+  if (!file) return false;
   if (!file.name.toLowerCase().endsWith('.glb')) {
     status.textContent = '目前请使用 GLB 格式模型。';
-    return;
+    return false;
   }
   if (file.size > 50 * 1024 * 1024) {
     status.textContent = '这个模型超过 50 MB。为了手机运行稳定，请先使用较小的 GLB 文件。';
-    return;
+    return false;
   }
   status.textContent = '正在本机校验模型结构…';
   let buffer;
@@ -930,9 +930,9 @@ async function loadModelFile(file, saveToCloud = true) {
     validateSelfContainedGlb(buffer);
   } catch (error) {
     status.textContent = error.message || '读取或校验 GLB 失败，请重新选择模型。';
-    return;
+    return false;
   }
-  if (!setupViewer()) return;
+  if (!setupViewer()) return false;
   status.textContent = '本机校验通过，正在加载 3D 模型…';
   const loader = new GLTFLoader();
   return new Promise(resolve => {
@@ -964,7 +964,7 @@ async function loadModelFile(file, saveToCloud = true) {
   });
 }
 
-window.xinlingLoadGeneratedModel = async file => { await loadModelFile(file, true); };
+window.xinlingLoadGeneratedModel = async file => { const loaded = await loadModelFile(file, true); if (!loaded) throw new Error('生成的模型未能成功解析，请查看 3D 模型状态。'); };
 
 modelInput.addEventListener('change', event => {
   const file = event.target.files && event.target.files[0];
