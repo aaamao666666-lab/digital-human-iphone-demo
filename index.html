@@ -461,8 +461,13 @@ async function pollAvatarRig(rigTaskId){
   avatarStatus.textContent='正在绑定人体骨骼：'+data.status+' · '+(data.progress||0)+'%';
   if(data.status==='SUCCEEDED'){
    avatarStatus.textContent='骨骼绑定完成，正在加载可驱动模型…';
-   await loadAvatarModel('rig-model',rigTaskId,'xinling-rigged-avatar.glb');
-   avatarStatus.textContent='基础 3D 人物模型与骨骼绑定模型均已生成，骨骼模型已加载。面部表情、口型同步和更丰富的身体动作仍需后续接入。';
+   try{
+    await loadAvatarModel('rig-walk',rigTaskId,'xinling-walking-avatar.glb');
+    avatarStatus.textContent='骨骼绑定完成，已加载服务商提供的行走动画；可在 3D 视窗下方暂停或切换动画。面部表情与口型同步仍需后续接入。';
+   }catch(walkError){
+    await loadAvatarModel('rig-model',rigTaskId,'xinling-rigged-avatar.glb');
+    avatarStatus.textContent='骨骼绑定完成，基础骨骼模型已加载；服务商未提供可用行走动画。面部表情与口型同步仍需后续接入。';
+   }
    return;
   }
   if(data.status==='FAILED'||data.status==='CANCELED')throw new Error(data.taskError||'骨骼绑定未成功，基础 3D 模型仍保留在视窗中。');
