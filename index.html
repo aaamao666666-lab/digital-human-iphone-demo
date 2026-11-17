@@ -637,11 +637,12 @@ function configureIdleMotion(root) {
   idleBones = [];
   root.traverse(node => {
     if (!node.isBone) return;
-    const name = String(node.name || '').toLowerCase().replace(/[ ._-]/g, '');
+    const name = String(node.name || '').toLowerCase().replace(/[ ._:-]/g, '');
     let kind = '';
-    if (/^(head|neck|neck1|headend)$/.test(name)) kind = name.startsWith('head') ? 'head' : 'neck';
+    if (name.endsWith('head')) kind = 'head';
+    else if (name.endsWith('neck')) kind = 'neck';
     else if (/(spine|chest|upperchest)/.test(name)) kind = 'spine';
-    else if (/(left|right)?(shoulder|upperarm|clavicle)/.test(name)) kind = 'arm';
+    else if (/(shoulder|upperarm|clavicle)/.test(name)) kind = 'arm';
     if (kind) idleBones.push({bone:node,kind,base:node.quaternion.clone(),phase:idleBones.length*0.83});
     if (!jawBone && /(jaw|mandible)/.test(name)) { jawBone=node; jawBaseQuaternion=node.quaternion.clone(); }
   });
@@ -1020,6 +1021,7 @@ animationSelect.addEventListener('change', () => {
 animationToggle.addEventListener('click', () => {
   if (!mixer || !activeAction) return;
   animationPaused = !animationPaused;
+  if (!animationPaused) resetIdlePose();
   animationToggle.textContent = animationPaused ? '继续动画' : '暂停动画';
 });
 resetCamera.addEventListener('click', () => {
@@ -1135,6 +1137,8 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 window.addEventListener('pagehide', () => {
+  if (micStream) micStream.getTracks().forEach(track => track.stop());
+  if (micContext) micContext.close().catch(() => {});
   if (animationFrame) cancelAnimationFrame(animationFrame);
   if (controls) controls.dispose();
   if (renderer) renderer.dispose();
