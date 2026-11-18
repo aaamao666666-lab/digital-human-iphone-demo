@@ -15,6 +15,22 @@ function supabaseConfig(env) {
   return { base, key, bucket };
 }
 
+async function throwSupabaseError(response, operation) {
+  const raw = await response.text().catch(() => "");
+  let parsed = null;
+  try { parsed = raw ? JSON.parse(raw) : null; } catch {}
+  const detail = parsed && typeof parsed === "object"
+    ? [parsed.message, parsed.error_description, parsed.error, parsed.details, parsed.hint]
+        .filter(value => typeof value === "string" && value.trim())
+        .join(" | ")
+    : raw;
+  const error = new Error(detail || ("Supabase Storage " + operation + " failed"));
+  error.status = response.status;
+  error.detail = String(detail || error.message).slice(0, 1500);
+  error.provider = "supabase";
+  throw error;
+}
+
 function encodePath(path) {
   return path.split("/").map(encodeURIComponent).join("/");
 }
@@ -50,7 +66,7 @@ export async function listAssets(env) {
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ prefix: PREFIX, limit: 100, offset: 0, sortBy: { column: "created_at", order: "desc" } })
   });
-  if (!response.ok) throw new Error("Supabase list failed: " + response.status);
+  if (!response.ok) await throwSupabaseError(response, "list");
   const rows = await response.json();
   const items = (Array.isArray(rows) ? rows : []).filter(row => row && row.name && row.id !== null).map(row => {
     const id = String(row.name);
@@ -88,7 +104,7 @@ export async function putAsset(env, id, name, bytes, mime, kind) {
     headers: { "content-type": mime, "x-upsert": "false", "cache-control": "3600" },
     body: bytes
   });
-  if (!response.ok) throw new Error("Supabase upload failed: " + response.status);
+  if (!response.ok) await throwSupabaseError(response, "upload");
 }
 
 export async function getAsset(env, id) {
@@ -107,7 +123,7 @@ export async function getAsset(env, id) {
   const { bucket } = supabaseConfig(env);
   const response = await supabaseFetch(env, "/object/" + encodeURIComponent(bucket) + "/" + encodePath(key), { method: "GET" });
   if (response.status === 404) return null;
-  if (!response.ok) throw new Error("Supabase download failed: " + response.status);
+  if (!response.ok) await throwSupabaseError(response, "download");
   const headers = new Headers(response.headers);
   headers.set("Cache-Control", "private, no-store");
   headers.set("X-Content-Type-Options", "nosniff");
@@ -128,7 +144,7 @@ export async function deleteAsset(env, id) {
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ prefixes: [key] })
   });
-  if (!response.ok) throw new Error("Supabase delete failed: " + response.status);
+  if (!response.ok) await throwSupabaseError(response, "delete");
 }
 
 export function kindFor(mime) {
