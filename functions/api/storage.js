@@ -39,7 +39,14 @@ async function supabaseFetch(env, path, init = {}) {
   const { base, key } = supabaseConfig(env);
   const headers = new Headers(init.headers || {});
   headers.set("apikey", key);
-  headers.set("Authorization", "Bearer " + key);
+  // New Supabase sb_secret_* keys are opaque API keys, not JWTs.
+  // Send them only via apikey. Legacy service_role keys are JWTs and
+  // remain compatible with the Authorization: Bearer header.
+  if (!key.startsWith("sb_secret_")) {
+    headers.set("Authorization", "Bearer " + key);
+  } else {
+    headers.delete("Authorization");
+  }
   return fetch(base + "/storage/v1" + path, { ...init, headers });
 }
 
