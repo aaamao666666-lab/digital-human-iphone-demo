@@ -5,7 +5,11 @@ import { onRequestGet as assetGet, onRequestDelete as assetDelete } from "./func
 import { onRequestPost as avatarCreatePost, onRequestGet as avatarStatusGet, onRequestGetModel as avatarModelGet, onRequestRigPost, onRequestRigGet, onRequestRigModelGet, onRequestRigWalkModelGet } from "./functions/api/avatar.js";
 
 const JSON_HEADERS={ "content-type":"application/json; charset=utf-8", "cache-control":"no-store" };
-const ALLOWED_ORIGINS=new Set(["https://aaamao666666-lab.github.io","https://digital-human-iphone-demo.aaamao666666.workers.dev"]);
+const ALLOWED_ORIGINS=new Set([
+ "https://aaamao666666-lab.github.io",
+ "https://digital-human-iphone-demo.aaamao666666.workers.dev",
+ "https://xinling-admin.aaamao666666.workers.dev"
+]);
 function json(payload,status=404,extraHeaders={}) {
  return new Response(JSON.stringify(payload),{status,headers:{...JSON_HEADERS,...extraHeaders}});
 }
