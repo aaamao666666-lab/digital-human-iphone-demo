@@ -837,6 +837,11 @@ function clearInspection() {
 function clearPreviousModel() {
   if(lipSyncActive)toggleLipSync();
   idleBones=[];lipSyncTargets=[];jawBone=null;jawBaseQuaternion=null;
+  idleMotionEnabled=true;
+  idleMotionToggle.disabled=true;
+  idleMotionToggle.textContent='待机动作：开';
+  lipSyncToggle.disabled=true;
+  lipSyncToggle.textContent='开启麦克风口型同步';
   if (mixer) mixer.stopAllAction();
   mixer = null;
   activeAction = null;
