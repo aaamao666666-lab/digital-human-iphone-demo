@@ -562,7 +562,7 @@ async function checkApiHealth() {
     if (!response.ok) throw new Error('HTTP ' + response.status);
     const data = await response.json();
     const states = [
-      data.cloudStorageConfigured ? '私有素材库已连接（' + (data.storageProvider || '存储服务') + '）' : '私有素材库未连接',
+      data.cloudStorageReachable ? '私有素材库连接正常（' + (data.storageProvider || '存储服务') + '）' : (data.cloudStorageConfigured ? '私有素材库配置异常' : '私有素材库未连接'),
       data.accessGateConfigured ? '内部测试口令已配置' : '内部测试口令缺失',
       data.deepseekConfigured ? 'DeepSeek 已配置' : 'DeepSeek 待配置',
       data.meshyConfigured ? '3D 生成服务已配置' : '3D 生成服务待配置'
