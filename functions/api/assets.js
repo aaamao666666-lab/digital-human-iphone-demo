@@ -12,6 +12,21 @@ function authorized(request, env) {
   for (let i=0;i<expected.length;i++) diff |= expected.charCodeAt(i) ^ supplied.charCodeAt(i);
   return diff === 0;
 }
+function storageErrorResponse(error, fallback) {
+  const status = Number(error?.status);
+  const httpStatus = Number.isInteger(status) && status >= 400 && status <= 599 ? status : 500;
+  const detail = String(error?.detail || error?.message || fallback).slice(0, 1500);
+  console.error("Cloud storage operation failed", {
+    provider: error?.provider || "unknown",
+    status: httpStatus,
+    detail
+  });
+  return json({
+    error: fallback,
+    upstreamStatus: error?.provider === "supabase" ? httpStatus : undefined,
+    detail
+  }, httpStatus);
+}
 function safeName(value) {
   return String(value || "upload").replace(/[\/\\\u0000-\u001f\u007f]/g, "_").slice(0,160) || "upload";
 }
@@ -21,8 +36,7 @@ export async function onRequestGet({ request, env }) {
   if (!storageProvider(env)) return json({ error:"云端素材库尚未连接。请配置 R2 或 Supabase Storage。" }, 503);
   try { return json(await listAssets(env)); }
   catch (error) {
-    console.error("Cloud storage list failed", error);
-    return json({ error:"读取云端素材库失败，请检查存储配置。" }, 500);
+    return storageErrorResponse(error, "读取云端素材库失败。");
   }
 }
 
@@ -54,7 +68,6 @@ export async function onRequestPost({ request, env }) {
     await putAsset(env, id, name, bytes, mime, kind);
     return json({ ok:true, item:{ id, name, kind, contentType:mime, size:bytes.byteLength } }, 201);
   } catch (error) {
-    console.error("Cloud upload failed", error);
-    return json({ error:"上传到云端失败。请检查存储桶配置和文件大小。" }, 500);
+    return storageErrorResponse(error, "上传到云端失败。");
   }
 }
