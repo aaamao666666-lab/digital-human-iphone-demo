@@ -29,7 +29,7 @@ function cors(request,response){
 export default {
  async fetch(request,env,ctx){
   const url=new URL(request.url);
-  const path=url.pathname.replace(/\\/+$/,"")||"/";
+  const path=url.pathname.replace(/\/+$/,"")||"/";
   if(path.startsWith("/api/")&&request.method==="OPTIONS"){
    return cors(request,new Response(null,{status:204}));
   }
@@ -41,7 +41,7 @@ export default {
    response=request.method==="GET"?await healthGet({request,env,params:{},waitUntil:p=>ctx.waitUntil(p)}):methodNotAllowed(["GET"]);
    return cors(request,response);
   }
-  const avatarMatch=path.match(/^\\/api\\/avatar\\/(generate|model|rig|rig-model|rig-walk)(?:\\/([^/]+))?$/);
+  const avatarMatch=path.match(/^\/api\/avatar\/(generate|model|rig|rig-model|rig-walk)(?:\/([^/]+))?$/);
   if(avatarMatch){
    const action=avatarMatch[1],taskId=avatarMatch[2]||"";
    if(action==="generate"&&!taskId){
@@ -83,7 +83,7 @@ export default {
    else response=methodNotAllowed(["GET","POST"]);
    return cors(request,response);
   }
-  const match=path.match(/^\\/api\\/assets\\/([^/]+)$/);
+  const match=path.match(/^\/api\/assets\/([^/]+)$/);
   if(match){
    let assetId;try{assetId=decodeURIComponent(match[1]);}catch{return cors(request,json({error:"素材编号无效。"},400));}
    const params={assetId};
