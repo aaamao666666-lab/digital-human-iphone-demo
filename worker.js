@@ -19,8 +19,8 @@ function cors(request,response){
  const headers=new Headers(response.headers);
  if(ALLOWED_ORIGINS.has(origin)){
   headers.set("Access-Control-Allow-Origin",origin);
-  headers.set("Access-Control-Allow-Methods","GET, POST, DELETE, OPTIONS");
-  headers.set("Access-Control-Allow-Headers","Content-Type, X-File-Name, X-App-Access-Key");
+  headers.set("Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS");
+  headers.set("Access-Control-Allow-Headers","Content-Type, Authorization, X-Admin-Key, X-App-Key, X-App-Access-Key, X-File-Name");
   headers.set("Access-Control-Max-Age","86400");
   headers.append("Vary","Origin");
  }
