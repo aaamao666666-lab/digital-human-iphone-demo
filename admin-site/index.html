@@ -116,11 +116,12 @@ function prettySize(n){return n<1048576?(n/1024).toFixed(0)+' KB':(n/1048576).to
 async function checkHealth(){
  try{
   const r=await fetch(API+'/api/health',{cache:'no-store'}),d=await r.json();
-  const ok=r.ok&&d.ok; $('healthDot').className='dot '+(ok?'ok':'no');
-  $('healthLabel').textContent=ok?(d.cloudStorageConfigured?'云存储已连接':'后端在线，云存储未连接'):'后端未连接';
-  if(!d.cloudStorageConfigured)setStatus('connectionStatus','后端已响应，但云存储尚未连接。可配置 Supabase Storage（推荐免绑卡免费档）或 Cloudflare R2。','bad');
+  const ok=r.ok&&d.ok; const storageOk=d.cloudStorageReachable===true; $('healthDot').className='dot '+(ok&&storageOk?'ok':'no');
+  $('healthLabel').textContent=ok?(storageOk?'云存储连接正常':(d.cloudStorageConfigured?'云存储配置异常':'后端在线，云存储未配置')):'后端未连接';
+  if(!d.cloudStorageConfigured)setStatus('connectionStatus','后端已响应，但未配置云存储。','bad');
+  else if(!storageOk){const e=d.storageError||{};setStatus('connectionStatus','云存储实际连接失败'+(e.status?'（HTTP '+e.status+'）':'')+'：'+(e.detail||'请检查 Supabase URL、Secret Key 和桶名。'),'bad');}
   else if(!d.accessGateConfigured)setStatus('connectionStatus','缺少后台访问口令配置 APP_TEST_KEY。','bad');
-  else setStatus('connectionStatus','后端和云存储已连接：'+(d.storageProvider||'已配置')+'。','good');
+  else setStatus('connectionStatus','后端已实际访问云存储：'+(d.storageProvider||'已配置')+'。','good');
   return d;
  }catch(e){$('healthDot').className='dot no';$('healthLabel').textContent='连接失败';setStatus('connectionStatus','无法连接 Cloudflare 后端：'+e.message,'bad');return null;}
 }
