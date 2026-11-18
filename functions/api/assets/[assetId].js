@@ -22,12 +22,24 @@ export async function onRequestGet({request,env,params}){
     const response=await getAsset(env,id);
     if(!response)return json({error:"找不到这份素材。"},404);
     return response;
-  }catch(error){console.error("Cloud download failed",error);return json({error:"读取云端素材失败。"},500);}
+  }catch(error){
+    const status=Number(error?.status);
+    const httpStatus=Number.isInteger(status)&&status>=400&&status<=599?status:500;
+    const detail=String(error?.detail||error?.message||"读取云端素材失败。").slice(0,1500);
+    console.error("Cloud download failed",{provider:error?.provider||"unknown",status:httpStatus,detail});
+    return json({error:"读取云端素材失败。",upstreamStatus:error?.provider==="supabase"?httpStatus:undefined,detail},httpStatus);
+  }
 }
 export async function onRequestDelete({request,env,params}){
   if(!authorized(request,env))return json({error:"未授权。"},401);
   if(!storageProvider(env))return json({error:"云端素材库未连接。"},503);
   const id=objectId(params.assetId);if(!id)return json({error:"素材编号无效。"},400);
   try{await deleteAsset(env,id);return json({ok:true});}
-  catch(error){console.error("Cloud delete failed",error);return json({error:"删除云端素材失败。"},500);}
+  catch(error){
+    const status=Number(error?.status);
+    const httpStatus=Number.isInteger(status)&&status>=400&&status<=599?status:500;
+    const detail=String(error?.detail||error?.message||"删除云端素材失败。").slice(0,1500);
+    console.error("Cloud delete failed",{provider:error?.provider||"unknown",status:httpStatus,detail});
+    return json({error:"删除云端素材失败。",upstreamStatus:error?.provider==="supabase"?httpStatus:undefined,detail},httpStatus);
+  }
 }
