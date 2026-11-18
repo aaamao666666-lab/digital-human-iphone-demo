@@ -30,7 +30,7 @@ export default {
  async fetch(request,env,ctx){
   const url=new URL(request.url);
   const path=url.pathname.replace(/\/+$/,"")||"/";
-  if(path.startsWith("/api/")&&request.method==="OPTIONS"){
+  if((path==="/api"||path.startsWith("/api/"))&&request.method==="OPTIONS"){
    return cors(request,new Response(null,{status:204}));
   }
   if(path==="/admin"||path==="/admin/"||path==="/admin.html"){
