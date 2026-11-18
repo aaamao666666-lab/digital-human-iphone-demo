@@ -50,6 +50,29 @@ async function supabaseFetch(env, path, init = {}) {
   return fetch(base + "/storage/v1" + path, { ...init, headers });
 }
 
+export async function checkStorageConnection(env) {
+  const provider = storageProvider(env);
+  if (!provider) return { ok: false, provider: null, status: 503, detail: "Supabase URL 或服务端密钥未配置。" };
+  try {
+    if (provider === "r2") {
+      await env.XINLING_MEDIA.list({ prefix: PREFIX, limit: 1 });
+      return { ok: true, provider };
+    }
+    const { bucket } = supabaseConfig(env);
+    const response = await supabaseFetch(env, "/object/list/" + encodeURIComponent(bucket), {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ prefix: PREFIX, limit: 1, offset: 0 })
+    });
+    if (!response.ok) await throwSupabaseError(response, "connection check");
+    await response.arrayBuffer();
+    return { ok: true, provider };
+  } catch (error) {
+    return { ok: false, provider, status: Number(error?.status) || 500,
+      detail: String(error?.detail || error?.message || "存储服务连接失败。").slice(0, 1000) };
+  }
+}
+
 export async function listAssets(env) {
   if (storageProvider(env) === "r2") {
     const result = await env.XINLING_MEDIA.list({ prefix: PREFIX, limit: 100, include: ["customMetadata", "httpMetadata"] });
