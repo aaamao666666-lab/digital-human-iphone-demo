@@ -105,6 +105,13 @@ let items=[],filter='all',activeUrls=[];
 $('accessKey').value=key;
 const headers=()=>({'x-app-access-key':key});
 function setStatus(id,msg,type=''){const el=$(id);el.textContent=msg;el.className='status '+type;}
+function apiErrorMessage(data,fallback,status){
+ const parts=[data?.error||fallback];
+ if(data?.upstreamStatus)parts.push('Supabase HTTP '+data.upstreamStatus);
+ if(data?.detail)parts.push(data.detail);
+ else if(status)parts.push('HTTP '+status);
+ return parts.join(' — ');
+}
 function prettySize(n){return n<1048576?(n/1024).toFixed(0)+' KB':(n/1048576).toFixed(2)+' MB';}
 async function checkHealth(){
  try{
@@ -124,7 +131,7 @@ async function connect(){
  setStatus('connectionStatus','正在验证访问权限…');
  try{
   const r=await fetch(API+'/api/assets',{headers:headers(),cache:'no-store'}),d=await r.json();
-  if(!r.ok)throw new Error(d.error||'验证失败：HTTP '+r.status);
+  if(!r.ok)throw new Error(apiErrorMessage(d,'验证失败',r.status));
   setStatus('connectionStatus','已连接后台，云端素材库可用。','good');
   render(d.items||[]);return true;
  }catch(e){sessionStorage.removeItem('xinling_admin_key');key='';setStatus('connectionStatus',e.message,'bad');return false;}
@@ -150,7 +157,7 @@ function render(list){
 async function loadItems(){
  if(!key){setStatus('connectionStatus','请先连接后台。','bad');return;}
  $('refreshBtn').disabled=true;
- try{const r=await fetch(API+'/api/assets',{headers:headers(),cache:'no-store'}),d=await r.json();if(!r.ok)throw new Error(d.error||'读取素材失败');render(d.items||[]);setStatus('connectionStatus','素材库已同步。','good');}
+ try{const r=await fetch(API+'/api/assets',{headers:headers(),cache:'no-store'}),d=await r.json();if(!r.ok)throw new Error(apiErrorMessage(d,'读取素材失败',r.status));render(d.items||[]);setStatus('connectionStatus','素材库已同步。','good');}
  catch(e){setStatus('connectionStatus',e.message,'bad');}
  finally{$('refreshBtn').disabled=false;}
 }
@@ -161,7 +168,7 @@ function uploadOne(file,index,total){
   xhr.setRequestHeader('x-file-name',encodeURIComponent(file.name));
   xhr.setRequestHeader('x-app-access-key',key);
   xhr.upload.onprogress=e=>{if(e.lengthComputable){const base=(index/total)*100;const part=(e.loaded/e.total)*(100/total);$('progressBar').style.width=(base+part)+'%';}};
-  xhr.onload=()=>{let d={};try{d=JSON.parse(xhr.responseText);}catch{};if(xhr.status>=200&&xhr.status<300)resolve(d.item);else reject(new Error(d.error||('上传失败：HTTP '+xhr.status)));};
+  xhr.onload=()=>{let d={};try{d=JSON.parse(xhr.responseText);}catch{};if(xhr.status>=200&&xhr.status<300)resolve(d.item);else reject(new Error(apiErrorMessage(d,'上传失败',xhr.status)));};
   xhr.onerror=()=>reject(new Error('网络中断，上传未完成。'));
   xhr.send(file);
  });
