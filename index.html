@@ -354,13 +354,20 @@ document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',(
 document.querySelectorAll('[data-open-studio]').forEach(b=>b.addEventListener('click',()=>showPage('studio')));
 document.querySelectorAll('a[href="#start"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();showPage('studio')}));
 let currentPreviewUrl=null;
+function storageApiError(data,fallback,status){
+ const parts=[data?.error||fallback];
+ if(data?.upstreamStatus)parts.push('Supabase HTTP '+data.upstreamStatus);
+ if(data?.detail)parts.push(data.detail);
+ else if(status)parts.push('HTTP '+status);
+ return parts.join(' — ');
+}
 async function uploadToCloud(file){
  const key=window.xinlingGetTestKey();
  if(!key) throw new Error('请先填写并保存内部测试口令。');
  if(file.size>50*1024*1024) throw new Error('单个文件最大 50 MB，请先压缩。');
  const response=await fetch('./api/assets',{method:'POST',headers:{'content-type':file.type||'application/octet-stream','x-file-name':encodeURIComponent(file.name),'x-app-access-key':key},body:file});
  const data=await response.json();
- if(!response.ok) throw new Error(data.error||('上传失败：'+response.status));
+ if(!response.ok) throw new Error(storageApiError(data,'上传失败',response.status));
  return data.item;
 }
 window.xinlingGetTestKey=()=>sessionStorage.getItem('xinling_test_key')||'';
@@ -371,7 +378,7 @@ async function refreshCloudAssets(){
  list.textContent='正在读取云端素材…';
  try{
   const res=await fetch('./api/assets',{headers:{'x-app-access-key':key},cache:'no-store'});
-  const data=await res.json();if(!res.ok)throw new Error(data.error||('读取失败：'+res.status));
+  const data=await res.json();if(!res.ok)throw new Error(storageApiError(data,'读取失败',res.status));
   list.replaceChildren();
   if(!data.items.length){list.textContent='云端还没有素材。';return;}
   data.items.forEach(item=>{
