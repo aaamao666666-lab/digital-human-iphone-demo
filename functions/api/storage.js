@@ -182,3 +182,21 @@ export function kindFor(mime) {
   if (String(mime).startsWith("video/")) return "video";
   return "model";
 }
+
+
+const PUBLISHED_PREFIX = "published/";
+export async function putPublishedAsset(env,id,name,bytes,mime,kind){
+ const key=PUBLISHED_PREFIX+id;
+ if(storageProvider(env)==="r2"){await env.XINLING_MEDIA.put(key,bytes,{httpMetadata:{contentType:mime,contentDisposition:"inline"},customMetadata:{name,kind,publishedAt:new Date().toISOString()}});return;}
+ const {bucket}=supabaseConfig(env);const response=await supabaseFetch(env,"/object/"+encodeURIComponent(bucket)+"/"+encodePath(key),{method:"POST",headers:{"content-type":mime,"x-upsert":"false","cache-control":"3600"},body:bytes});if(!response.ok)await throwSupabaseError(response,"publish");
+}
+export async function listPublishedAssets(env){
+ if(storageProvider(env)==="r2"){const result=await env.XINLING_MEDIA.list({prefix:PUBLISHED_PREFIX,limit:100,include:["customMetadata","httpMetadata"]});return {items:result.objects.map(obj=>({id:obj.key.slice(PUBLISHED_PREFIX.length),name:obj.customMetadata?.name||"网站素材",kind:obj.customMetadata?.kind||kindFor(obj.httpMetadata?.contentType||""),contentType:obj.httpMetadata?.contentType||"application/octet-stream",size:obj.size,url:"/api/public/assets/"+encodeURIComponent(obj.key.slice(PUBLISHED_PREFIX.length))})),truncated:result.truncated};}
+ const {bucket}=supabaseConfig(env);const response=await supabaseFetch(env,"/object/list/"+encodeURIComponent(bucket),{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({prefix:PUBLISHED_PREFIX,limit:100,offset:0,sortBy:{column:"created_at",order:"desc"}})});if(!response.ok)await throwSupabaseError(response,"public list");const rows=await response.json();
+ const items=(Array.isArray(rows)?rows:[]).filter(row=>row&&row.name).map(row=>{const id=String(row.name),split=id.match(/^([0-9a-f-]{36})--(.*)$/i);let name="网站素材";if(split){try{name=decodeURIComponent(split[2]);}catch{}}const contentType=row.metadata?.mimetype||row.metadata?.contentType||"application/octet-stream";return {id,name,kind:kindFor(contentType),contentType,size:Number(row.metadata?.size||row.metadata?.contentLength||0),url:"/api/public/assets/"+encodeURIComponent(id)};});return {items,truncated:false};
+}
+export async function getPublishedAsset(env,id){
+ const key=PUBLISHED_PREFIX+id;
+ if(storageProvider(env)==="r2"){const object=await env.XINLING_MEDIA.get(key);if(!object)return null;const headers=new Headers();object.writeHttpMetadata(headers);headers.set("Cache-Control","public, max-age=300");headers.set("X-Content-Type-Options","nosniff");headers.set("Content-Disposition","inline");return new Response(object.body,{headers});}
+ const {bucket}=supabaseConfig(env);const response=await supabaseFetch(env,"/object/"+encodeURIComponent(bucket)+"/"+encodePath(key),{method:"GET"});if(response.status===404)return null;if(!response.ok)await throwSupabaseError(response,"public download");const headers=new Headers(response.headers);headers.set("Cache-Control","public, max-age=300");headers.set("X-Content-Type-Options","nosniff");headers.set("Content-Disposition","inline");headers.delete("content-length");return new Response(response.body,{status:200,headers});
+}
