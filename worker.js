@@ -1,3 +1,4 @@
+/* Cloudflare production deployment trigger: sync latest merged frontend assets. */
 import { onRequestGet as healthGet } from "./functions/api/health.js";
 import { onRequestGet as assetsListGet, onRequestPost as assetsUploadPost } from "./functions/api/assets.js";
 import { onRequestPost as chatPost } from "./functions/api/chat.js";
