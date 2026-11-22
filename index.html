@@ -379,7 +379,7 @@ img,video,canvas,svg{max-width:100%}
  <button class="studio-shortcut" type="button" data-scroll-target="mediaInput"><i>▶</i><b>视频素材</b><span>本机预览并上传视频素材</span></button>
  <button class="studio-shortcut" type="button" data-scroll-target="modelViewer"><i>◇</i><b>3D 预览</b><span>查看模型、骨骼与动画能力</span></button>
  <button class="studio-shortcut" type="button" data-scroll-target="cloudAssetsList"><i>▤</i><b>我的素材</b><span>管理私有云端照片、视频和模型</span></button>
-</div><div class="kicker">XINLING CREATIVE STUDIO</div><h2>数字人工作台</h2><p class="hint">内部测试素材保存在私有云端。当前支持 Supabase Storage 或 Cloudflare R2 私有存储；连接完成后才能启用上传与云端素材管理。</p>
+</div>
 <div class="panel"><h3>内部测试访问</h3><p class="hint">输入管理员配置的测试口令。口令只保存在当前浏览器标签页会话中。</p><div class="access-row"><input id="appTestKey" type="password" autocomplete="off" placeholder="内部测试口令"><button class="secondary" id="saveTestKey" type="button">保存并连接</button></div><div id="apiStatus" class="chat-status">正在检查云端后端…</div></div>
 <div class="panel"><h3>上传照片或视频到云端</h3><p class="hint">支持 JPG、PNG、WEBP、GIF、MP4、MOV、WEBM；单个文件最大 50 MB。</p><div class="upload-zone"><div>选择照片或视频</div><input id="mediaInput" type="file" accept="image/*,video/*"></div><div id="mediaPreview" class="hint" aria-live="polite">选择文件后自动上传到私有云端。</div></div>
 <div class="panel" id="avatarGenerationPanel">
