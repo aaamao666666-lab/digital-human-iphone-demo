@@ -1260,4 +1260,12 @@ document.querySelectorAll('[data-scroll-target]').forEach(button=>{
  });
 });
 </script>
-</body></html>
+<script>
+(async()=>{
+ const home=document.querySelector('#home');const hero=home?.querySelector('.hero');if(!home||!hero)return;
+ const section=document.createElement('section');section.id='published-gallery';section.style.cssText='max-width:1120px;margin:38px auto;padding:24px 18px 42px';
+ section.innerHTML='<div style="font-size:11px;letter-spacing:2px;color:#71836b">XINLING · PUBLIC MEDIA</div><h2 style="font-size:26px;font-weight:500;margin:8px 0">精选影像</h2><p style="color:#85887e;font-size:13px">来自鑫灵素材库的公开展示内容</p><div id="published-media-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px"></div>';
+ hero.insertAdjacentElement('afterend',section);
+ try{const r=await fetch('/api/public/assets',{cache:'no-store'});if(!r.ok)throw Error('暂时无法读取');const data=await r.json();const grid=section.querySelector('#published-media-grid');(data.items||[]).forEach(item=>{const card=document.createElement('article');card.style.cssText='background:#fff;border:1px solid #e8e6dc;border-radius:16px;overflow:hidden';let media;if(item.kind==='video'){media=document.createElement('video');media.controls=true;media.playsInline=true;media.preload='metadata';}else{media=document.createElement('img');media.alt=item.name;media.loading='lazy';}media.src=item.url;media.style.cssText='width:100%;aspect-ratio:4/3;object-fit:cover;display:block';const title=document.createElement('div');title.textContent=item.name;title.style.cssText='padding:12px;font-size:13px';card.append(media,title);grid.append(card);});if(!data.items?.length)section.hidden=true;}catch(e){section.hidden=true;}
+})();
+</script></body></html>
