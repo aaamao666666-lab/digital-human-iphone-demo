@@ -191,6 +191,48 @@ img,video,canvas,svg{max-width:100%}
 
 \n.app-admin-link{align-self:center;flex-shrink:0;padding:8px 10px;border:1px solid #dce2d7;border-radius:20px;color:#667a61;font-size:11px;white-space:nowrap;background:#fffefa}\n
 .model-inspection{margin-top:15px;padding:14px;border:1px solid #e4e7de;border-radius:14px;background:#f8f8f2}.model-inspection[hidden]{display:none!important}.inspection-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.inspection-head strong{display:block;color:#455340;font-size:13px}.inspection-head span{display:block;color:#96998d;font-size:10px;margin-top:4px}.inspection-head button{flex-shrink:0;padding:8px 10px;font-size:10px}.inspection-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin:13px 0}.inspection-stat{min-width:0;padding:10px 5px;border:1px solid #e7e9e1;border-radius:10px;background:#fffefa;text-align:center}.inspection-stat b{display:block;color:#61765f;font-size:18px;font-weight:600;font-variant-numeric:tabular-nums}.inspection-stat span{display:block;margin-top:4px;color:#92958b;font-size:9px;white-space:nowrap}.inspection-block{padding:12px 0;border-top:1px solid #e7e8e0}.inspection-title{font-size:11px;color:#586a53;font-weight:600}.inspection-block p{font-size:10px;color:#92958b;line-height:1.7;margin:6px 0 10px}.expression-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px}.expression-row{min-width:0;padding:7px 8px;border:1px solid #e7e9e1;border-radius:9px;background:#fffefa}.expression-row label{display:flex;justify-content:space-between;gap:8px;color:#626e5d;font-size:10px;overflow-wrap:anywhere}.expression-row output{color:#92958b;font-variant-numeric:tabular-nums}.expression-row input{display:block;width:100%;height:20px;margin:5px 0 0;accent-color:#788b75}.bone-names{display:flex;flex-wrap:wrap;gap:5px}.bone-chip{max-width:100%;padding:5px 7px;border-radius:7px;background:#fffefa;border:1px solid #e7e9e1;color:#76816f;font-size:9px;overflow-wrap:anywhere}.inspection-foot{font-size:10px;line-height:1.7;color:#92958b;padding-top:10px;border-top:1px solid #e7e8e0}.viewer-tools select{max-width:100%;min-width:130px;border:1px solid #c9cfc3;border-radius:22px;background:#fffefa;padding:9px 12px;color:#64765f;font-size:12px}@media(max-width:420px){.inspection-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.expression-controls{grid-template-columns:1fr}.viewer{height:330px}.viewer-tools{gap:7px}.viewer-tools button,.viewer-tools select{font-size:10px;padding:8px 10px}}
+
+/* Xinling mobile studio refresh */
+#studio{background:radial-gradient(ellipse at 50% 0%,#30216d 0%,#10132f 44%,#090d1d 100%);color:#f6f4ff;padding:26px 16px 112px;min-height:100vh}
+#studio>.kicker{color:#bca4ff;letter-spacing:2px}
+#studio>h2{color:#fff;font-size:30px;margin:8px 0}
+#studio>.hint{color:#c2c3df;line-height:1.75}
+.studio-hero{position:relative;overflow:hidden;border:1px solid #a58cff66;border-radius:25px;background:linear-gradient(135deg,#25185c,#111a42 58%,#37115f);box-shadow:0 18px 50px #05081788;margin:18px 0 20px}
+.studio-hero-media{height:310px;position:relative;background:#171b3b}
+.studio-hero-media video{width:100%;height:100%;object-fit:cover;object-position:center 24%;display:block;opacity:.92}
+.studio-hero-media:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#0b0d1a00 35%,#10132ff2 100%)}
+.studio-hero-copy{position:absolute;z-index:1;left:20px;right:20px;bottom:18px}
+.studio-hero-copy small{color:#c6b6ff;letter-spacing:2px;font-size:10px}
+.studio-hero-copy h3{font-size:25px;margin:7px 0;color:#fff}
+.studio-hero-copy p{font-size:12px;color:#d5d2ed;line-height:1.6;margin:0}
+.studio-hero-actions{display:flex;gap:10px;padding:0 14px 16px}
+.studio-hero-actions button{flex:1;border:1px solid #a88cff88;border-radius:14px;padding:13px 8px;background:#ffffff12;color:#fff;font-size:13px}
+.studio-hero-actions button:first-child{background:linear-gradient(110deg,#5b50f6,#b62bea);border:0;font-weight:700}
+.studio-shortcuts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin:14px 0 22px}
+.studio-shortcut{border:1px solid #8c80d966;border-radius:17px;padding:16px 14px;background:linear-gradient(145deg,#29245a,#171c3b);color:#fff;text-align:left;min-height:104px}
+.studio-shortcut b{display:block;font-size:15px;margin-bottom:7px}
+.studio-shortcut span{display:block;font-size:11px;line-height:1.5;color:#c2c1df}
+.studio-shortcut i{font-style:normal;font-size:23px;display:block;margin-bottom:7px;color:#c6a6ff}
+#studio .panel{background:#151a36;border:1px solid #7167a855;border-radius:18px;color:#f7f5ff;box-shadow:0 10px 28px #05081755;padding:18px;margin:13px 0}
+#studio .panel h3{color:#fff;font-size:17px}
+#studio .panel .hint,#studio .viewer-note,#studio .inspection-block p{color:#b9bdd8}
+#studio input:not([type=file]),#studio select{background:#0c122a;border:1px solid #625b91;color:#fff;border-radius:12px}
+#studio .upload-zone{background:#111936;border:1px dashed #9b83f5;border-radius:15px;color:#ddd8ff;padding:18px}
+#studio .viewer{background:radial-gradient(ellipse at center,#27315b,#080d1d);border:1px solid #7565b8;border-radius:17px;min-height:300px}
+#studio #viewerPlaceholder{color:#c5c6e3}
+#studio .status,#studio .chat-status{color:#d4c8ff}
+#studio .bottom-nav{background:#0c1026f2;border-top:1px solid #635a9a}
+#studio .bottom-nav button{color:#d3d2ee}
+#studio .bottom-nav button.active{color:#d5a5ff}
+.studio-section-label{font-size:10px;letter-spacing:2px;color:#b6a3ff;margin:22px 2px 10px}
+@media(max-width:600px){
+ #studio{padding:22px 13px 104px}
+ .studio-hero-media{height:285px}
+ .studio-hero-copy h3{font-size:23px}
+ .studio-hero-actions button{font-size:12px;padding:12px 5px}
+ #studio .panel{padding:15px}
+ #studio .viewer{min-height:270px}
+}
 </style><script type="importmap">
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.187.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.187.0/examples/jsm/"}}
 </script>
@@ -325,6 +367,19 @@ img,video,canvas,svg{max-width:100%}
   </section>
 </main>
 <section class="workspace" id="studio"><div class="kicker">XINLING CREATIVE STUDIO</div><h2>数字人工作台</h2><p class="hint">内部测试素材保存在私有云端。当前支持 Supabase Storage 或 Cloudflare R2 私有存储；连接完成后才能启用上传与云端素材管理。</p>
+<div class="studio-hero">
+ <div class="studio-hero-media"><video autoplay muted loop playsinline preload="metadata" poster="assets/portrait-clean.webp"><source src="xinling-home-hero.mp4" type="video/mp4"></video>
+  <div class="studio-hero-copy"><small>YOUR PERSONAL AI AVATAR</small><h3>让你的数字分身，开始表达。</h3><p>从本人照片或视频开始，创建可查看、可驱动的 3D 数字形象。</p></div>
+ </div>
+ <div class="studio-hero-actions"><button type="button" data-scroll-target="avatarGenerationPanel">✦ 创建数字人</button><button type="button" data-scroll-target="modelViewer">◇ 预览 3D 模型</button></div>
+</div>
+<div class="studio-section-label">快速开始 · QUICK ACTIONS</div>
+<div class="studio-shortcuts">
+ <button class="studio-shortcut" type="button" data-scroll-target="avatarGenerationPanel"><i>▧</i><b>照片生成</b><span>上传本人照片，提取参考画面</span></button>
+ <button class="studio-shortcut" type="button" data-scroll-target="mediaInput"><i>▶</i><b>视频素材</b><span>本机预览并上传视频素材</span></button>
+ <button class="studio-shortcut" type="button" data-scroll-target="modelViewer"><i>◇</i><b>3D 预览</b><span>查看模型、骨骼与动画能力</span></button>
+ <button class="studio-shortcut" type="button" data-scroll-target="cloudAssetsList"><i>▤</i><b>我的素材</b><span>管理私有云端照片、视频和模型</span></button>
+</div><div class="kicker">XINLING CREATIVE STUDIO</div><h2>数字人工作台</h2><p class="hint">内部测试素材保存在私有云端。当前支持 Supabase Storage 或 Cloudflare R2 私有存储；连接完成后才能启用上传与云端素材管理。</p>
 <div class="panel"><h3>内部测试访问</h3><p class="hint">输入管理员配置的测试口令。口令只保存在当前浏览器标签页会话中。</p><div class="access-row"><input id="appTestKey" type="password" autocomplete="off" placeholder="内部测试口令"><button class="secondary" id="saveTestKey" type="button">保存并连接</button></div><div id="apiStatus" class="chat-status">正在检查云端后端…</div></div>
 <div class="panel"><h3>上传照片或视频到云端</h3><p class="hint">支持 JPG、PNG、WEBP、GIF、MP4、MOV、WEBM；单个文件最大 50 MB。</p><div class="upload-zone"><div>选择照片或视频</div><input id="mediaInput" type="file" accept="image/*,video/*"></div><div id="mediaPreview" class="hint" aria-live="polite">选择文件后自动上传到私有云端。</div></div>
 <div class="panel" id="avatarGenerationPanel">
@@ -1196,6 +1251,13 @@ window.addEventListener('pagehide', () => {
   if (animationFrame) cancelAnimationFrame(animationFrame);
   if (controls) controls.dispose();
   if (renderer) renderer.dispose();
+});
+
+document.querySelectorAll('[data-scroll-target]').forEach(button=>{
+ button.addEventListener('click',()=>{
+  const target=document.getElementById(button.dataset.scrollTarget);
+  if(target){target.scrollIntoView({behavior:'smooth',block:'start'});}
+ });
 });
 </script>
 </body></html>
