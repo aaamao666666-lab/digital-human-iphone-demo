@@ -37,7 +37,13 @@ try {
   const health = await healthResponse.json();
   assert.equal(health.ok, true, "API 未报告 ok=true");
   assert.equal(health.cloudStorageConfigured, true, "云端存储尚未配置");
-  console.log("✓ API 健康检查与云端存储配置");
+  if (health.cloudStorageReachable !== true || health.storageStatus !== "connected") {
+    const diagnostic = health.storageError
+      ? `HTTP ${health.storageError.status || "未知"}：${health.storageError.detail || "无详细信息"}`
+      : `storageStatus=${health.storageStatus || "缺失"}`;
+    throw new Error(`云端存储配置存在，但实时连接探测未通过。${diagnostic}`);
+  }
+  console.log(`✓ API 健康检查与云端存储实时连通（${health.storageProvider || "unknown"}）`);
 
   const denied = await fetch(base + "/api/assets", { cache: "no-store" });
   await expectStatus(denied, 401, "未授权访问保护");
