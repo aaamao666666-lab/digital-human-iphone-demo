@@ -2,6 +2,7 @@
 import { onRequestGet as healthGet } from "./functions/api/health.js";
 import { onRequestGet as assetsListGet, onRequestPost as assetsUploadPost } from "./functions/api/assets.js";
 import { onRequestPost as chatPost } from "./functions/api/chat.js";
+import { publicList, publicGet, publishPost } from "./functions/api/public-assets.js";
 import { onRequestGet as assetGet, onRequestDelete as assetDelete } from "./functions/api/assets/[assetId].js";
 import { onRequestPost as avatarCreatePost, onRequestGet as avatarStatusGet, onRequestGetModel as avatarModelGet, onRequestRigPost, onRequestRigGet, onRequestRigModelGet, onRequestRigWalkModelGet } from "./functions/api/avatar.js";
 
@@ -76,6 +77,20 @@ export default {
   }
   if(path==="/api/chat"){
    response=request.method==="POST"?await chatPost({request,env,params:{},waitUntil:p=>ctx.waitUntil(p)}):methodNotAllowed(["POST"]);
+   return cors(request,response);
+  }
+  if(path==="/api/public/assets"){
+   response=request.method==="GET"?await publicList({request,env}):methodNotAllowed(["GET"]);
+   return cors(request,response);
+  }
+  if(path==="/api/assets/publish"){
+   response=request.method==="POST"?await publishPost({request,env}):methodNotAllowed(["POST"]);
+   return cors(request,response);
+  }
+  const publicMatch=path.match(/^\\/api\\/public\\/assets\\/([^/]+)$/);
+  if(publicMatch){
+   let assetId;try{assetId=decodeURIComponent(publicMatch[1]);}catch{return cors(request,json({error:"素材编号无效。"},400));}
+   response=request.method==="GET"?await publicGet({request,env,params:{assetId}}):methodNotAllowed(["GET"]);
    return cors(request,response);
   }
   if(path==="/api/assets"){
