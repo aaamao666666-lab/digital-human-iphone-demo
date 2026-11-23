@@ -10,6 +10,8 @@ on:
       - "wrangler.jsonc"
       - "package.json"
       - ".assetsignore"
+      - "index.html"
+      - "scripts/**"
       - ".github/workflows/worker-syntax.yml"
   pull_request:
     paths:
@@ -33,6 +35,7 @@ jobs:
       - name: 检查 Worker 和 API 语法
         run: |
           node --check worker.js
+          node scripts/check-index-inline.mjs
           find functions -name '*.js' -print0 | xargs -0 -n1 node --check
       - name: 检查 Wrangler 配置
         run: node -e "JSON.parse(require('fs').readFileSync('wrangler.jsonc', 'utf8')); console.log('wrangler.jsonc OK')"
@@ -41,3 +44,4 @@ jobs:
           grep -qx 'functions/' .assetsignore
           grep -qx 'worker.js' .assetsignore
           grep -qx 'WORKER_DEPLOYMENT.md' .assetsignore
+          grep -qx 'scripts/' .assetsignore
