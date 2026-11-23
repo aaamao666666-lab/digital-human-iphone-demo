@@ -481,7 +481,7 @@ const AVATAR_TASK_STORAGE_KEY='xinling_avatar_task';
 function readSavedAvatarTask(){
  try{
   const task=JSON.parse(sessionStorage.getItem(AVATAR_TASK_STORAGE_KEY)||'null');
-  return task&&typeof task.taskId==='string'?task:null;
+  return task&&(typeof task.taskId==='string'||typeof task.sourceTaskId==='string')?task:null;
  }catch{return null;}
 }
 function saveAvatarTask(task){
@@ -615,6 +615,11 @@ async function pollAvatarTask(taskId){
  throw new Error('生成任务仍在后台运行。稍后可再次查询任务；请勿重复点击生成。');
 }
 avatarButton.addEventListener('click',async()=>{
+ if(readSavedAvatarTask()){
+  resumeAvatarButton.hidden=false;
+  avatarStatus.textContent='已有未完成的 3D 任务。请先继续查询上次任务，避免重复生成和重复扣费。';
+  return;
+ }
  const files=Array.from(avatarInput.files||[]),key=window.xinlingGetTestKey();
  if(!key){avatarStatus.textContent='请先填写并保存内部测试口令。';return;}
  if(!avatarConsent.checked){avatarStatus.textContent='请先确认肖像授权和第三方处理说明。';return;}
