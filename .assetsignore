@@ -13,3 +13,5 @@ package.json
 package-lock.json
 WORKER_DEPLOYMENT.md
 README.md
+
+scripts/
