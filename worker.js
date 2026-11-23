@@ -87,7 +87,7 @@ export default {
    response=request.method==="POST"?await publishPost({request,env}):methodNotAllowed(["POST"]);
    return cors(request,response);
   }
-  const publicMatch=path.match(/^\\/api\\/public\\/assets\\/([^/]+)$/);
+  const publicMatch=path.match(/^\/api\/public\/assets\/([^/]+)$/);
   if(publicMatch){
    let assetId;try{assetId=decodeURIComponent(publicMatch[1]);}catch{return cors(request,json({error:"素材编号无效。"},400));}
    response=request.method==="GET"?await publicGet({request,env,params:{assetId}}):methodNotAllowed(["GET"]);
