@@ -5,7 +5,8 @@
   "scripts": {
     "deploy": "wrangler deploy",
     "preview": "wrangler preview",
-    "test:storage": "node scripts/storage-smoke-test.mjs"
+    "test:storage": "node scripts/storage-smoke-test.mjs",
+    "test:regression": "node --test scripts/worker-regression.test.mjs"
   },
   "devDependencies": {
     "wrangler": "^4.68.0"
