@@ -20,6 +20,8 @@ on:
       - "wrangler.jsonc"
       - "package.json"
       - ".assetsignore"
+      - "index.html"
+      - "scripts/**"
       - ".github/workflows/worker-syntax.yml"
 
 jobs:
