@@ -389,6 +389,7 @@ img,video,canvas,svg{max-width:100%}
 <label style="display:flex;gap:9px;align-items:flex-start;font-size:12px;line-height:1.7;color:#687565;margin:14px 0"><input id="avatarConsent" type="checkbox" style="margin-top:3px">我确认已取得本人或肖像权利人的明确授权，并知悉提交后素材会发送给第三方 3D 服务商；生成模型与自动骨骼绑定均可能消耗服务商账户额度。</label>
 <button class="primary" id="generateAvatarButton" type="button" style="width:100%">开始生成我的 3D 数字人</button>
 <div id="avatarGenerationStatus" class="status" aria-live="polite">等待选择素材。当前仅在服务端配置生成服务密钥后才能开始。</div>
+<button class="secondary" id="resumeAvatarTaskButton" type="button" hidden style="width:100%;margin-top:10px">继续查询上次生成任务</button>
 </div>
 <div class="panel"><h3>导入并保存 3D 模型</h3><p class="hint">支持 50 MB 以内、自带纹理资源的 GLB 2.0。先在本机校验、预览并检测骨骼/形变/动画，通过后再上传到私有云端。</p><div class="viewer-tools"><button id="loadHumanoidDemo" type="button">加载人体骨骼动作示例</button><span class="viewer-note">官方测试模型：Cesium Man（CC BY 4.0），用于验证骨骼蒙皮与行走动画，不代表最终超写实数字人效果。</span></div><input id="modelInput" type="file" accept=".glb,model/gltf-binary,model/gltf+json"><div id="modelStatus" class="status">尚未选择模型</div><div class="viewer" id="modelViewer"><div id="viewerPlaceholder">选择一个 GLB 模型<br>在这里旋转、缩放和查看模型动画</div><canvas id="modelCanvas"></canvas></div><div class="viewer-tools"><button id="animationToggle" type="button" disabled>暂停动画</button><button id="idleMotionToggle" type="button" disabled>待机动作：开</button><button id="lipSyncToggle" type="button" disabled>开启麦克风口型同步</button><button id="resetCamera" type="button" disabled>重置视角</button><select id="animationSelect" aria-label="选择模型动画" disabled><option value="">无内置动画</option></select></div><p class="viewer-note">待机动作在本机运行；口型同步使用麦克风实时音量驱动模型已有的嘴部形变或下颌骨，不录音、不上传声音。需要模型具备相应面部结构。</p><div class="model-inspection" id="modelInspection"><div class="inspection-head"><div><strong>模型能力检测</strong><span id="inspectionSummary">等待模型</span></div><button class="secondary" id="resetExpressions" type="button">重置形变</button></div><div class="inspection-grid"><div class="inspection-stat"><b id="statMeshes">—</b><span>网格</span></div><div class="inspection-stat"><b id="statSkinned">—</b><span>蒙皮网格</span></div><div class="inspection-stat"><b id="statBones">—</b><span>骨骼</span></div><div class="inspection-stat"><b id="statMorphs">—</b><span>形变目标</span></div><div class="inspection-stat"><b id="statAnimations">—</b><span>动画</span></div></div><div class="inspection-block"><div class="inspection-title">表情 / 形变测试</div><p>如果模型带有形变目标，可以拖动滑块查看效果；没有形变目标时不会凭空生成表情。</p><div id="expressionControls" class="expression-controls">尚未检测</div></div><div class="inspection-block"><div class="inspection-title">骨骼节点</div><div id="boneNames" class="bone-names">尚未检测</div></div><div class="inspection-foot" id="inspectionNote">检测只读取模型已有结构，不会自动补骨骼、表情或动作。</div></div><div class="viewer-note">先在本机校验 GLB 结构，再上传到私有云端；模型文件不会公开生成下载链接。</div></div>
 <div class="panel"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px"><h3 style="margin:0">我的云端素材</h3><button class="secondary" id="refreshAssets" type="button">刷新</button></div><div id="cloudAssetsList" class="hint" style="margin-top:14px">连接云端后显示已上传素材。</div><div id="assetPreview" style="margin-top:14px"></div></div>
@@ -475,6 +476,26 @@ const avatarInput=document.getElementById('avatarSourceInput');
 const avatarConsent=document.getElementById('avatarConsent');
 const avatarButton=document.getElementById('generateAvatarButton');
 const avatarStatus=document.getElementById('avatarGenerationStatus');
+const resumeAvatarButton=document.getElementById('resumeAvatarTaskButton');
+const AVATAR_TASK_STORAGE_KEY='xinling_avatar_task';
+function readSavedAvatarTask(){
+ try{
+  const task=JSON.parse(sessionStorage.getItem(AVATAR_TASK_STORAGE_KEY)||'null');
+  return task&&typeof task.taskId==='string'?task:null;
+ }catch{return null;}
+}
+function saveAvatarTask(task){
+ sessionStorage.setItem(AVATAR_TASK_STORAGE_KEY,JSON.stringify(task));
+ resumeAvatarButton.hidden=false;
+}
+function clearAvatarTask(){
+ sessionStorage.removeItem(AVATAR_TASK_STORAGE_KEY);
+ resumeAvatarButton.hidden=true;
+}
+if(readSavedAvatarTask()){
+ resumeAvatarButton.hidden=false;
+ avatarStatus.textContent='检测到上次未完成的 3D 任务，可继续查询，不需要重新上传或重复生成。';
+}
 function waitEvent(target,name){return new Promise((resolve,reject)=>{const ok=()=>{cleanup();resolve();},bad=()=>{cleanup();reject(new Error('无法读取所选视频，请换一个 MP4/MOV 文件。'));},cleanup=()=>{target.removeEventListener(name,ok);target.removeEventListener('error',bad);};target.addEventListener(name,ok,{once:true});target.addEventListener('error',bad,{once:true});});}
 function canvasJpeg(canvas){return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('照片帧压缩失败。')),'image/jpeg',0.84));}
 async function imageToDataUri(file){
@@ -539,6 +560,7 @@ async function loadAvatarModel(endpoint,taskId,name){
  await window.xinlingLoadGeneratedModel(file);
 }
 async function pollAvatarRig(rigTaskId){
+ saveAvatarTask({stage:'rigging',taskId:rigTaskId});
  for(let attempt=0;attempt<90;attempt++){
   const response=await fetch('./api/avatar/rig/'+encodeURIComponent(rigTaskId),{headers:{'x-app-access-key':window.xinlingGetTestKey()},cache:'no-store'});
   const data=await response.json();if(!response.ok)throw new Error(data.error||'读取骨骼绑定进度失败。');
@@ -550,16 +572,29 @@ async function pollAvatarRig(rigTaskId){
     avatarStatus.textContent='骨骼绑定完成，已加载服务商提供的行走动画；可在 3D 视窗下方暂停或切换动画。面部表情与口型同步仍需后续接入。';
    }catch(walkError){
     await loadAvatarModel('rig-model',rigTaskId,'xinling-rigged-avatar.glb');
-    avatarStatus.textContent='骨骼绑定完成，基础骨骼模型已加载；服务商未提供可用行走动画。面部表情与口型同步仍需后续接入。';
+    avatarStatus.textContent='骨骼绑定完成，基础骨骼模型已加载；服务商未提供可用行走动画。高精度面部表情与语音驱动口型仍需后续接入。';
    }
+   clearAvatarTask();
    return;
   }
-  if(data.status==='FAILED'||data.status==='CANCELED')throw new Error(data.taskError||'骨骼绑定未成功，基础 3D 模型仍保留在视窗中。');
+  if(data.status==='FAILED'||data.status==='CANCELED'){
+   clearAvatarTask();
+   throw new Error(data.taskError||'骨骼绑定未成功，基础 3D 模型仍保留在视窗中。');
+  }
   await new Promise(resolve=>setTimeout(resolve,5000));
  }
  throw new Error('骨骼绑定仍在后台运行，请稍后重新查询。');
 }
+async function startAvatarRig(taskId){
+ saveAvatarTask({stage:'rigging-submit',sourceTaskId:taskId});
+ const rigResponse=await fetch('./api/avatar/rig',{method:'POST',headers:{'content-type':'application/json','x-app-access-key':window.xinlingGetTestKey()},body:JSON.stringify({taskId})});
+ const rigData=await rigResponse.json();
+ if(!rigResponse.ok)throw new Error(rigData.error||'基础模型已生成，但自动骨骼绑定未能启动。');
+ saveAvatarTask({stage:'rigging',taskId:rigData.taskId,sourceTaskId:taskId});
+ await pollAvatarRig(rigData.taskId);
+}
 async function pollAvatarTask(taskId){
+ saveAvatarTask({stage:'generation',taskId});
  for(let attempt=0;attempt<90;attempt++){
   const response=await fetch('./api/avatar/generate/'+encodeURIComponent(taskId),{headers:{'x-app-access-key':window.xinlingGetTestKey()},cache:'no-store'});
   const data=await response.json();if(!response.ok)throw new Error(data.error||'读取生成进度失败。');
@@ -568,12 +603,13 @@ async function pollAvatarTask(taskId){
    avatarStatus.textContent='基础 3D 模型已生成，正在加载…';
    await loadAvatarModel('model',taskId,'xinling-generated-avatar.glb');
    avatarStatus.textContent='基础模型已加载，正在提交自动骨骼绑定…';
-   const rigResponse=await fetch('./api/avatar/rig',{method:'POST',headers:{'content-type':'application/json','x-app-access-key':window.xinlingGetTestKey()},body:JSON.stringify({taskId})});
-   const rigData=await rigResponse.json();if(!rigResponse.ok)throw new Error(rigData.error||'基础模型已生成，但自动骨骼绑定未能启动。');
-   await pollAvatarRig(rigData.taskId);
+   await startAvatarRig(taskId);
    return;
   }
-  if(data.status==='FAILED'||data.status==='CANCELED')throw new Error(data.taskError||'3D 服务生成失败，请换一组清晰的多角度素材。');
+  if(data.status==='FAILED'||data.status==='CANCELED'){
+   clearAvatarTask();
+   throw new Error(data.taskError||'3D 服务生成失败，请换一组清晰的多角度素材。');
+  }
   await new Promise(resolve=>setTimeout(resolve,5000));
  }
  throw new Error('生成任务仍在后台运行。稍后可再次查询任务；请勿重复点击生成。');
@@ -592,10 +628,25 @@ avatarButton.addEventListener('click',async()=>{
   avatarStatus.textContent='已准备 '+imageUrls.length+' 张参考画面，正在提交 3D 生成任务…';
   const response=await fetch('./api/avatar/generate',{method:'POST',headers:{'content-type':'application/json','x-app-access-key':key},body:JSON.stringify({imageUrls})});
   const data=await response.json();if(!response.ok)throw new Error(data.error||('提交失败：'+response.status));
+  saveAvatarTask({stage:'generation',taskId:data.taskId});
   avatarStatus.textContent='任务已创建，编号：'+data.taskId+'。正在等待生成…';
   await pollAvatarTask(data.taskId);
  }catch(error){avatarStatus.textContent=error.message||'生成任务失败。';}
  finally{avatarButton.disabled=false;}
+});
+resumeAvatarButton.addEventListener('click',async()=>{
+ const task=readSavedAvatarTask();
+ if(!task){resumeAvatarButton.hidden=true;return;}
+ if(!window.xinlingGetTestKey()){avatarStatus.textContent='请先填写并保存内部测试口令，再继续查询。';return;}
+ resumeAvatarButton.disabled=true;
+ try{
+  if(task.stage==='rigging')await pollAvatarRig(task.taskId);
+  else if(task.stage==='rigging-submit'){
+   const retry=confirm('上次骨骼绑定请求没有返回任务编号。重试可能重复消耗服务商额度；请确认服务商任务列表中没有已创建的绑定任务后再继续。确定重试吗？');
+   if(retry)await startAvatarRig(task.sourceTaskId);
+  }else await pollAvatarTask(task.taskId);
+ }catch(error){avatarStatus.textContent=error.message||'恢复任务失败。';}
+ finally{resumeAvatarButton.disabled=false;}
 });
 
 document.getElementById('mediaInput').addEventListener('change',async e=>{
