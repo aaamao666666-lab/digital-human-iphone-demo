@@ -384,7 +384,7 @@ img,video,canvas,svg{max-width:100%}
 <div class="panel"><h3>上传照片或视频到云端</h3><p class="hint">支持 JPG、PNG、WEBP、GIF、MP4、MOV、WEBM；单个文件最大 50 MB。</p><div class="upload-zone"><div>选择照片或视频</div><input id="mediaInput" type="file" accept="image/*,video/*"></div><div id="mediaPreview" class="hint" aria-live="polite">选择文件后自动上传到私有云端。</div></div>
 <div class="panel" id="avatarGenerationPanel">
 <h3>上传照片 / 视频，自动生成 3D 数字人</h3>
-<p class="hint">客户只需上传本人或已获授权的照片/视频。照片最多 4 张；视频会在手机本机自动截取关键帧，再提交生成基础 3D 人物模型并尝试自动骨骼绑定。系统会在后台调用 3D 服务，客户不需要 GLB 文件。</p>
+<p class="hint">客户只需上传本人或已获授权的照片/视频。最多提交 4 张参考画面；第一张请使用正面全身照，其他画面尽量覆盖左右侧面与背面。视频请缓慢环绕人物拍摄，避免快速移动、遮挡和多人同框；关键帧会在手机本机提取，再提交生成基础 3D 人物模型并尝试自动骨骼绑定。系统会在后台调用 3D 服务，客户不需要 GLB 文件。</p>
 <div class="upload-zone"><div>选择照片或视频（可多选，最多 4 个素材）</div><input id="avatarSourceInput" type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/quicktime,video/webm" multiple></div>
 <label style="display:flex;gap:9px;align-items:flex-start;font-size:12px;line-height:1.7;color:#687565;margin:14px 0"><input id="avatarConsent" type="checkbox" style="margin-top:3px">我确认已取得本人或肖像权利人的明确授权，并知悉提交后素材会发送给第三方 3D 服务商；生成模型与自动骨骼绑定均可能消耗服务商账户额度。</label>
 <button class="primary" id="generateAvatarButton" type="button" style="width:100%">开始生成我的 3D 数字人</button>
@@ -569,7 +569,7 @@ async function pollAvatarRig(rigTaskId){
    avatarStatus.textContent='骨骼绑定完成，正在加载可驱动模型…';
    try{
     await loadAvatarModel('rig-walk',rigTaskId,'xinling-walking-avatar.glb');
-    avatarStatus.textContent='骨骼绑定完成，已加载服务商提供的行走动画；可在 3D 视窗下方暂停或切换动画。面部表情与口型同步仍需后续接入。';
+    avatarStatus.textContent='骨骼绑定完成，已加载服务商提供的行走动画。若模型带嘴部形变或下颌骨，可开启本机麦克风口型控制；高精度表情与语音驱动口型仍需后续接入。';
    }catch(walkError){
     await loadAvatarModel('rig-model',rigTaskId,'xinling-rigged-avatar.glb');
     avatarStatus.textContent='骨骼绑定完成，基础骨骼模型已加载；服务商未提供可用行走动画。高精度面部表情与语音驱动口型仍需后续接入。';
